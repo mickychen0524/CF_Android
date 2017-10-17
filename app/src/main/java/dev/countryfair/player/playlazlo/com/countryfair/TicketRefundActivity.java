@@ -2,7 +2,6 @@ package dev.countryfair.player.playlazlo.com.countryfair;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -12,7 +11,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -29,15 +27,12 @@ import com.google.zxing.common.BitMatrix;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import cn.refactor.lib.colordialog.PromptDialog;
 import dev.countryfair.player.playlazlo.com.countryfair.adapter.TicketRefundListAdapter;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.APIInterface;
-import dev.countryfair.player.playlazlo.com.countryfair.helper.AdvancedHTTPClient;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.AndroidUtilities;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.AppHelper;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.Constants;
@@ -132,7 +127,7 @@ public class TicketRefundActivity extends AppCompatActivity {
             public void run() {
                 try {
                     String uuid = AndroidUtilities.getUUID(TicketRefundActivity.this);
-                    receivedObj = APIInterface.ticketRefund(ticketRefundItem,uuid);
+                    receivedObj = APIInterface.ticketRefund(TicketRefundActivity.this,ticketRefundItem,uuid);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

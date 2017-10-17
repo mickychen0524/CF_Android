@@ -12,11 +12,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import net.hockeyapp.android.CrashManager;
-import net.hockeyapp.android.CrashManagerListener;
 
 import org.json.JSONObject;
 
-import dev.countryfair.player.playlazlo.com.countryfair.PermissionActivity;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.APIInterface;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.Constants;
 
@@ -45,16 +43,16 @@ public class ConfigService extends Service {
             @Override
             public void run() {
                 try {
-                    final JSONObject receivedObj = APIInterface.getConfiguration();
+                    final JSONObject receivedObj = APIInterface.getConfiguration(getApplicationContext());
                     if(receivedObj!=null){
                         Log.d(TAG, "retrieveAndUpdateConfig: "+receivedObj.toString());
                         JSONObject dataObj = receivedObj.getJSONObject("data");
                         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                         SharedPreferences.Editor editor = sharedPref.edit();
-                        editor.putString("hockeyAppId", dataObj.getString("hockeyAppId"));
+                        editor.putString("hockeyAppIdAndroid", dataObj.getString("hockeyAppIdAndroid"));
                         editor.putString("ocrLicenseCodeAndroid", dataObj.getString("ocrLicenseCodeAndroid"));
                         editor.apply();
-                        Constants.HOCKEY_APP_ID = sharedPref.getString("hockeyAppId","");
+                        Constants.HOCKEY_APP_ID = sharedPref.getString("hockeyAppIdAndroid","");
                         Constants.OCR_LICENSE_CODE = sharedPref.getString("ocrLicenseCodeAndroid","");
                     }
                 } catch (Exception e) {

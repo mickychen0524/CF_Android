@@ -25,12 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.refactor.lib.colordialog.PromptDialog;
-import dev.countryfair.player.playlazlo.com.countryfair.adapter.CardsListDataAdapter;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.APIInterface;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.AppHelper;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.Constants;
-import dev.countryfair.player.playlazlo.com.countryfair.helper.DbManager;
-import dev.countryfair.player.playlazlo.com.countryfair.model.Loyalty;
 
 /**
  * Created by Android Developer on 16/08/17.
@@ -77,7 +74,7 @@ public class LoyaltyActivity extends FragmentActivity {
             new Thread(new Runnable() {
                 public void run() {
                     try {
-                        receivedObj = APIInterface.getRewards();
+                        receivedObj = APIInterface.getRewards(LoyaltyActivity.this);
                         Log.d(TAG, "run: "+receivedObj.toString());
                         runOnUiThread(new Runnable() {
                             @Override

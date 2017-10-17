@@ -9,8 +9,6 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -33,7 +31,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,7 +38,6 @@ import java.util.List;
 
 import dev.countryfair.player.playlazlo.com.countryfair.R;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.APIInterface;
-import dev.countryfair.player.playlazlo.com.countryfair.helper.AdvancedHTTPClient;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.AndroidUtilities;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.AppHelper;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.Constants;
@@ -177,7 +173,7 @@ public class ChannelListDataAdapter extends RecyclerView.Adapter<ChannelListData
         new Thread(new Runnable() {
             public void run() {
                 try {
-                    receivedObj = APIInterface.getDrawList(gameRefId);
+                    receivedObj = APIInterface.getDrawList(mContext, gameRefId);
 
                     activity.runOnUiThread(new Runnable() {
                         @Override

@@ -91,7 +91,7 @@ public class GettingRetailerListService extends IntentService {
         public void run() {
             try {
                 String uuid = AndroidUtilities.getUUID(GettingRetailerListService.this);
-                receivedObj = APIInterface.getRetailerByLocation(uuid);
+                receivedObj = APIInterface.getRetailerByLocation(GettingRetailerListService.this, uuid);
 
                 if (receivedObj != null) {
                     try {

@@ -12,7 +12,6 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -357,7 +356,7 @@ public class CentralFragment extends Fragment {
             public void run() {
                 try {
                     String uuid = AndroidUtilities.getUUID(getActivity());
-                    receivedObj = APIInterface.registerWithImage(i_wasBorn, userSelfie, uuid);
+                    receivedObj = APIInterface.registerWithImage(getActivity(), i_wasBorn, userSelfie, uuid);
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -529,7 +528,7 @@ public class CentralFragment extends Fragment {
                     editor.putString("deviceTokenForPush", refreshedToken);
                     editor.apply();
                     String uuid = AndroidUtilities.getUUID(getActivity());
-                    receivedObj = APIInterface.registerPushNotification(refreshedToken, uuid);
+                    receivedObj = APIInterface.registerPushNotification(getActivity(), refreshedToken, uuid);
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -576,7 +575,7 @@ public class CentralFragment extends Fragment {
             public void run() {
                 try {
 
-                    final Bitmap tempBmp = APIInterface.downloadSocialImage();
+                    final Bitmap tempBmp = APIInterface.downloadSocialImage(getActivity());
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -720,6 +719,8 @@ public class CentralFragment extends Fragment {
         RequestBody reqFile = RequestBody.create(MediaType.parse("image/jpg"), file);
         MultipartBody.Part body = MultipartBody.Part.create(reqFile);
 
+        final ReceiptData data = receiptResponse.getData();
+
         Map<String, String> headersMap = new HashMap<>();
         headersMap.put("Lazlo-CorrelationRefId", receiptResponse.getCorrelationRefId());
         headersMap.put("Accept-Type", "application/json");
@@ -733,7 +734,7 @@ public class CentralFragment extends Fragment {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 Log.d(TAG, "uploadImageToServer - onResponse - " + response.isSuccessful());
-                uploadReceiptOCR(receiptResponse, scanResults);
+                uploadReceiptOCR(receiptResponse, scanResults, data.getReceiptRefId());
             }
 
             @Override
@@ -745,7 +746,7 @@ public class CentralFragment extends Fragment {
         });
     }
 
-    private void uploadReceiptOCR(ReceiptResponse response, ScanResults results) {
+    private void uploadReceiptOCR(ReceiptResponse response, ScanResults results, String receiptRefId) {
         Map<String, String> headersMap = new HashMap<>();
         headersMap.put("Lazlo-CorrelationRefId", response.getCorrelationRefId());
         headersMap.put("Accept-Type", "application/json");
@@ -771,9 +772,9 @@ public class CentralFragment extends Fragment {
         }
 
         ocrBody.setOcrRaw(null);
-
-        if (location != null) {
-            ReceiptRequestBody body = new ReceiptRequestBody(ocrBody, response.getCorrelationRefId(), String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()));
+        ocrBody.setReceiptRefId(receiptRefId);
+//        if (location != null) {
+            ReceiptRequestBody body = new ReceiptRequestBody(ocrBody, response.getCorrelationRefId(), "", "");
 
             ApiClient.getInstance(getContext()).putReceiptOCR(headersMap, body).enqueue(new Callback<ResponseBody>() {
                 @Override
@@ -791,9 +792,9 @@ public class CentralFragment extends Fragment {
                     t.printStackTrace();
                 }
             });
-        } else {
-            Toast.makeText(getContext(), "Failed to upload receipt. Please try again.", Toast.LENGTH_SHORT).show();
-        }
+//        } else {
+//            Toast.makeText(getContext(), "Failed to upload receipt. Please try again.", Toast.LENGTH_SHORT).show();
+//        }
     }
 
 

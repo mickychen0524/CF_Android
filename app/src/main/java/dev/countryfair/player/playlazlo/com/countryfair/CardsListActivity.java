@@ -2,16 +2,13 @@ package dev.countryfair.player.playlazlo.com.countryfair;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.telephony.TelephonyManager;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
@@ -21,18 +18,17 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
-import java.text.DateFormat;
+
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import cn.refactor.lib.colordialog.PromptDialog;
 import dev.countryfair.player.playlazlo.com.countryfair.adapter.CardsListDataAdapter;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.APIInterface;
-import dev.countryfair.player.playlazlo.com.countryfair.helper.AdvancedHTTPClient;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.AndroidUtilities;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.AppHelper;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.AppStringHelper;
@@ -108,7 +104,7 @@ public class CardsListActivity extends AppCompatActivity {
             new Thread(new Runnable() {
                 public void run() {
                     try {
-                        receivedObj = APIInterface.getAllMerchandies();
+                        receivedObj = APIInterface.getAllMerchandies(CardsListActivity.this);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -188,7 +184,7 @@ public class CardsListActivity extends AppCompatActivity {
             new Thread(new Runnable() {
                 public void run() {
                     try {
-                        receivedObj = APIInterface.getAllTerms();
+                        receivedObj = APIInterface.getAllTerms(CardsListActivity.this);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -265,7 +261,7 @@ public class CardsListActivity extends AppCompatActivity {
                 public void run() {
                     try {
                         String uuid = AndroidUtilities.getUUID(CardsListActivity.this);
-                        receivedObj = APIInterface.ticketClaimComplete(merchandObj,totalAmount,claimLicenseCodeStr,uuid);
+                        receivedObj = APIInterface.ticketClaimComplete(CardsListActivity.this, merchandObj,totalAmount,claimLicenseCodeStr,uuid);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {

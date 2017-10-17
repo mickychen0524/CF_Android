@@ -155,7 +155,7 @@ public class Constants {
         this.TOKEN = sharedPref.getString("token", "");
         this.BRAND_LISENCE_CODE = sharedPref.getString("brandLicenseCode", "");
         this.PLAYER_TOKEN = sharedPref.getString("playerLicenseCode","");
-        this.HOCKEY_APP_ID = sharedPref.getString("hockeyAppId","");
+        this.HOCKEY_APP_ID = sharedPref.getString("hockeyAppIdAndroid","");
         this.OCR_LICENSE_CODE = sharedPref.getString("ocrLicenseCodeAndroid","");
     }
 

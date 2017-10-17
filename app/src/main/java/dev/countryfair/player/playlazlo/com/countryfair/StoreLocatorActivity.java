@@ -11,7 +11,6 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -37,6 +36,7 @@ import dev.countryfair.player.playlazlo.com.countryfair.helper.APIInterface;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.AndroidUtilities;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.AppHelper;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.Constants;
+import dev.countryfair.player.playlazlo.com.countryfair.service.GettingRetailerListService;
 
 /**
  * Created by Android Developer on 20/08/17.
@@ -128,7 +128,7 @@ public class StoreLocatorActivity extends FragmentActivity{
             new Thread(new Runnable() {
                 public void run() {
                     try {
-                        receivedObj = APIInterface.getRetailerByLocation(AndroidUtilities.getUUID(getApplicationContext()));
+                        receivedObj = APIInterface.getRetailerByLocation(StoreLocatorActivity.this, AndroidUtilities.getUUID(getApplicationContext()));
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {

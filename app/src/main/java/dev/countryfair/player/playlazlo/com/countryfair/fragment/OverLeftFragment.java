@@ -12,31 +12,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import cn.refactor.lib.colordialog.PromptDialog;
-import dev.countryfair.player.playlazlo.com.countryfair.CardsListActivity;
 import dev.countryfair.player.playlazlo.com.countryfair.R;
 import dev.countryfair.player.playlazlo.com.countryfair.ShoppingCartGiftListActivity;
-import dev.countryfair.player.playlazlo.com.countryfair.ShoppingCartListActivity;
-import dev.countryfair.player.playlazlo.com.countryfair.adapter.CardsListDataAdapter;
 import dev.countryfair.player.playlazlo.com.countryfair.adapter.GiftcardsListDataAdapter;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.APIInterface;
-import dev.countryfair.player.playlazlo.com.countryfair.helper.AdvancedHTTPClient;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.AppHelper;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.Constants;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.DbManager;
@@ -144,7 +137,7 @@ public class OverLeftFragment extends Fragment {
 			new Thread(new Runnable() {
 				public void run() {
 					try {
-						receivedObj = APIInterface.getAllMerchandies();
+						receivedObj = APIInterface.getAllMerchandies(getActivity());
 						getActivity().runOnUiThread(new Runnable() {
 							@Override
 							public void run() {

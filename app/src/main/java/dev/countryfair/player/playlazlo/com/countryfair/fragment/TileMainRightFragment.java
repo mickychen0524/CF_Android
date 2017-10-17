@@ -216,7 +216,7 @@ public class TileMainRightFragment extends Fragment {
 		new Thread(new Runnable() {
 			public void run() {
 				try {
-					receivedObj = APIInterface.getGames();
+					receivedObj = APIInterface.getGames(getActivity());
 					getActivity().runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
@@ -291,7 +291,7 @@ public class TileMainRightFragment extends Fragment {
 		new Thread(new Runnable() {
 			public void run() {
 				try {
-					receivedObj = APIInterface.getChannelAndBrands();
+					receivedObj = APIInterface.getChannelAndBrands(getActivity());
 					getActivity().runOnUiThread(new Runnable() {
 						@Override
 						public void run() {

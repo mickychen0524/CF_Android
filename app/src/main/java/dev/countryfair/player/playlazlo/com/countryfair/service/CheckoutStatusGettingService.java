@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Locale;
 
 import dev.countryfair.player.playlazlo.com.countryfair.helper.APIInterface;
-import dev.countryfair.player.playlazlo.com.countryfair.helper.AdvancedHTTPClient;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.AppHelper;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.Constants;
 
@@ -103,7 +102,7 @@ public class CheckoutStatusGettingService extends IntentService {
                         licenseCypherText = checkoutRes.getString("licenseCypherText");
                         System.out.println(licenseCypherText);
                         //TODO: Push Skip not sure
-                        receivedObj = APIInterface.getCheckoutStatusSession(checkoutRes);
+                        receivedObj = APIInterface.getCheckoutStatusSession(getApplicationContext(), checkoutRes);
 
                         b_checkoutbtnPressed = false;
 

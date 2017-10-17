@@ -77,7 +77,7 @@ public class RegistrationService extends Service {
             editor.putString("deviceTokenForPush", regID);
             editor.apply();
             String uuid = AndroidUtilities.getUUID(RegistrationService.this);
-            final JSONObject receivedObj = APIInterface.registerPushNotification(regID,uuid);
+            final JSONObject receivedObj = APIInterface.registerPushNotification(RegistrationService.this, regID,uuid);
             if (receivedObj != null) {
                 try {
                     displayResult(true);
