@@ -11,12 +11,10 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -32,20 +30,16 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.common.BitMatrix;
 
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import cn.refactor.lib.colordialog.ColorDialog;
 import cn.refactor.lib.colordialog.PromptDialog;
 import dev.countryfair.player.playlazlo.com.countryfair.adapter.ShoppingCartListAdapter;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.APIInterface;
-import dev.countryfair.player.playlazlo.com.countryfair.helper.AdvancedHTTPClient;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.AndroidUtilities;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.AppHelper;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.Constants;
@@ -132,7 +126,7 @@ public class ShoppingCartListActivity extends AppCompatActivity {
                     int simulationType = sharePref.getBoolean("isSystemGenerated", true) ? 9 : 0;
                     String uuid = AndroidUtilities.getUUID(ShoppingCartListActivity.this);
                     //TODO: Push Skip
-                    receivedObj = APIInterface.checkoutWithShopping(shoppingCartData,simulationType,uuid);
+                    receivedObj = APIInterface.checkoutWithShopping(ShoppingCartListActivity.this, shoppingCartData,simulationType,uuid);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -372,7 +366,7 @@ public class ShoppingCartListActivity extends AppCompatActivity {
             public void run() {
                 try {
                     String uuid = AndroidUtilities.getUUID(ShoppingCartListActivity.this);
-                    receivedObj = APIInterface.checkoutCancel(obj,uuid);
+                    receivedObj = APIInterface.checkoutCancel(ShoppingCartListActivity.this, obj,uuid);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

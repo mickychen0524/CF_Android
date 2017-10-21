@@ -124,7 +124,7 @@ public class ShoppingCartGiftListActivity extends AppCompatActivity {
                     int simulationType = sharePref.getBoolean("isSystemGenerated", true) ? 9 : 0;
                     String uuid = AndroidUtilities.getUUID(ShoppingCartGiftListActivity.this);
                     //TODO: Push Skip
-                    receivedObj = APIInterface.checkoutWithShoppingGift(shoppingCartData,simulationType,uuid);
+                    receivedObj = APIInterface.checkoutWithShoppingGift(ShoppingCartGiftListActivity.this, shoppingCartData,simulationType,uuid);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -364,7 +364,7 @@ public class ShoppingCartGiftListActivity extends AppCompatActivity {
             public void run() {
                 try {
                     String uuid = AndroidUtilities.getUUID(ShoppingCartGiftListActivity.this);
-                    receivedObj = APIInterface.checkoutCancel(obj,uuid);
+                    receivedObj = APIInterface.checkoutCancel(ShoppingCartGiftListActivity.this, obj,uuid);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

@@ -1,5 +1,6 @@
 package dev.countryfair.player.playlazlo.com.countryfair.helper;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Base64;
 import android.util.Log;
@@ -19,7 +20,7 @@ public class APIInterface {
 
     private static final String TAG = APIInterface.class.getSimpleName();
 
-    public static JSONObject ticketClaimComplete(JSONObject merchandObj,float amount,String claimLicenseCode,String uuid) throws Exception {
+    public static JSONObject ticketClaimComplete(Context context, JSONObject merchandObj, float amount, String claimLicenseCode, String uuid) throws Exception {
 
         JSONObject postParams = new JSONObject();
         JSONObject midParams = new JSONObject();
@@ -42,18 +43,18 @@ public class APIInterface {
         postParams.put("createdOn", currentDateTimeString);
         postParams.put("data", midParams);
 
-        return new AdvancedHTTPClient().httpPostMethod(Constants.URL_TICKET_CLAIM_COMPLETE, postParams.toString());
+        return new AdvancedHTTPClient().httpPostMethod(context, Constants.URL_TICKET_CLAIM_COMPLETE, postParams.toString());
     }
 
-    public static JSONObject getAllMerchandies() throws Exception {
-        return new AdvancedHTTPClient().httpGetMethod(Constants.URL_GET_ALL_MERCHANDIES);
+    public static JSONObject getAllMerchandies(Context context) throws Exception {
+        return new AdvancedHTTPClient().httpGetMethod(context, Constants.URL_GET_ALL_MERCHANDIES);
     }
 
-    public static JSONObject getAllTerms() throws Exception {
-        return new AdvancedHTTPClient().httpGetMethod(Constants.URL_GET_ALL_TERMS);
+    public static JSONObject getAllTerms(Context context) throws Exception {
+        return new AdvancedHTTPClient().httpGetMethod(context, Constants.URL_GET_ALL_TERMS);
     }
 
-    public static JSONObject checkoutCancel(JSONObject obj,String uuid) throws Exception {
+    public static JSONObject checkoutCancel(Context context, JSONObject obj,String uuid) throws Exception {
 
         JSONObject postParams = new JSONObject();
         JSONObject midParams = new JSONObject();
@@ -71,10 +72,10 @@ public class APIInterface {
         postParams.put("data", midParams);
 
 
-        return new AdvancedHTTPClient().httpPostMethod(Constants.URL_CHECKOUT_CANCEL, postParams.toString());
+        return new AdvancedHTTPClient().httpPostMethod(context, Constants.URL_CHECKOUT_CANCEL, postParams.toString());
     }
 
-    public static JSONObject checkoutWithShopping(List<JSONObject> shoppingCartData, int simulationType, String uuid) throws Exception {
+    public static JSONObject checkoutWithShopping(Context context, List<JSONObject> shoppingCartData, int simulationType, String uuid) throws Exception {
 
         JSONObject postParams = new JSONObject();
         JSONObject midParams = new JSONObject();
@@ -131,10 +132,10 @@ public class APIInterface {
 
 
 
-        return new AdvancedHTTPClient().httpPostMethod(Constants.URL_CHECKOUT_WITH_SHOPPING, postParams.toString());
+        return new AdvancedHTTPClient().httpPostMethod(context, Constants.URL_CHECKOUT_WITH_SHOPPING, postParams.toString());
     }
 
-    public static JSONObject ticketValidate(JSONObject ticketItem,String uuid) throws Exception {
+    public static JSONObject ticketValidate(Context context, JSONObject ticketItem,String uuid) throws Exception {
 
         JSONObject postParams = new JSONObject();
         JSONObject midParams = new JSONObject();
@@ -154,10 +155,10 @@ public class APIInterface {
         postParams.put("createdOn", currentDateTimeString);
         postParams.put("data", midParams);
 
-        return new AdvancedHTTPClient().httpPostMethod(Constants.URL_TICKET_VALIDATE, postParams.toString());
+        return new AdvancedHTTPClient().httpPostMethod(context, Constants.URL_TICKET_VALIDATE, postParams.toString());
     }
 
-    public static JSONObject ticketRefund(JSONObject ticketRefundItem,String uuid) throws Exception {
+    public static JSONObject ticketRefund(Context context, JSONObject ticketRefundItem,String uuid) throws Exception {
 
         JSONObject postParams = new JSONObject();
         JSONObject midParams = new JSONObject();
@@ -189,14 +190,14 @@ public class APIInterface {
         postParams.put("createdOn", currentDateTimeString);
         postParams.put("data", midParams);
 
-        return new AdvancedHTTPClient().httpPostMethod(Constants.URL_REFUND_TICKET, postParams.toString());
+        return new AdvancedHTTPClient().httpPostMethod(context, Constants.URL_REFUND_TICKET, postParams.toString());
     }
 
-    public static JSONObject getDrawList(String gameRefId) throws Exception {
-        return new AdvancedHTTPClient().httpGetMethod(Constants.URL_GET_DRAW_PREFIX+gameRefId+Constants.URL_GET_DRAW_SURFIX);
+    public static JSONObject getDrawList(Context context, String gameRefId) throws Exception {
+        return new AdvancedHTTPClient().httpGetMethod(context, Constants.URL_GET_DRAW_PREFIX+gameRefId+Constants.URL_GET_DRAW_SURFIX);
     }
 
-    public static JSONObject checkoutWithShoppingGift(List<JSONObject> shoppingCartData, int simulationType, String uuid) throws Exception {
+    public static JSONObject checkoutWithShoppingGift(Context context, List<JSONObject> shoppingCartData, int simulationType, String uuid) throws Exception {
 
         JSONObject postParams = new JSONObject();
         JSONObject midParams = new JSONObject();
@@ -237,9 +238,10 @@ public class APIInterface {
 
 
 
-        return new AdvancedHTTPClient().httpPostMethod(Constants.URL_CHECKOUT_WITH_SHOPPING, postParams.toString());
+        return new AdvancedHTTPClient().httpPostMethod(context, Constants.URL_CHECKOUT_WITH_SHOPPING, postParams.toString());
     }
-    public static JSONObject checkoutWithShopping(JSONObject channelData,float value, int simulationType, String uuid) throws Exception {
+
+    public static JSONObject checkoutWithShopping(Context context, JSONObject channelData,float value, int simulationType, String uuid) throws Exception {
 
         JSONObject postParams = new JSONObject();
         JSONObject midParams = new JSONObject();
@@ -277,14 +279,14 @@ public class APIInterface {
 
 
 
-        return new AdvancedHTTPClient().httpPostMethod(Constants.URL_CHECKOUT_WITH_SHOPPING, postParams.toString());
+        return new AdvancedHTTPClient().httpPostMethod(context, Constants.URL_CHECKOUT_WITH_SHOPPING, postParams.toString());
     }
 
-    public static Bitmap downloadSocialImage() throws Exception{
-        return new AdvancedHTTPClient().httpDownloadSocialImage(Constants.URL_DOWNLOAD_SOCIAL_PHOTO);
+    public static Bitmap downloadSocialImage(Context context) throws Exception{
+        return new AdvancedHTTPClient().httpDownloadSocialImage(context, Constants.URL_DOWNLOAD_SOCIAL_PHOTO);
     }
 
-    public static JSONObject registerPushNotification(String refreshedToken,String uuid) throws Exception {
+    public static JSONObject registerPushNotification(Context context, String refreshedToken,String uuid) throws Exception {
         Log.i(TAG, "registerPushNotification : " + refreshedToken);
 
         JSONObject postParams = new JSONObject();
@@ -303,10 +305,10 @@ public class APIInterface {
         postParams.put("createdOn", currentDateTimeString);
         postParams.put("data", midParams);
 
-        return new AdvancedHTTPClient().httpPutMethod(Constants.URL_REGISTER_PUSH_NOTIFICATION,postParams.toString());
+        return new AdvancedHTTPClient().httpPutMethod(context, Constants.URL_REGISTER_PUSH_NOTIFICATION,postParams.toString());
     }
 
-    public static JSONObject registerWithImage(int ageValue,String userSelfie,String uuid) throws Exception {
+    public static JSONObject registerWithImage(Context context, int ageValue,String userSelfie,String uuid) throws Exception {
 
 
         JSONObject postParams = new JSONObject();
@@ -330,40 +332,40 @@ public class APIInterface {
         postParams.put("createdOn", currentDateTimeString);
         postParams.put("data", midParams);
 
-        return new AdvancedHTTPClient().httpPostMethod(Constants.URL_REGISTER_USER_WITH_IMAGE,postParams.toString());
+        return new AdvancedHTTPClient().httpPostMethod(context, Constants.URL_REGISTER_USER_WITH_IMAGE,postParams.toString());
     }
 
-    public static JSONObject uploadReceipt(String encodedImage) throws Exception {
-        return new AdvancedHTTPClient().httpPostMethod(Constants.URL_GETTING_UPLOAD_RECEIPT_IMG, encodedImage);
+    public static JSONObject uploadReceipt(Context context, String encodedImage) throws Exception {
+        return new AdvancedHTTPClient().httpPostMethod(context, Constants.URL_GETTING_UPLOAD_RECEIPT_IMG, encodedImage);
     }
 
-    public static JSONObject getChannelAndBrands() throws Exception {
-        return new AdvancedHTTPClient().httpGetMethod(Constants.URL_GET_CHANNEL_AND_BRANDS_LIST);
+    public static JSONObject getChannelAndBrands(Context context) throws Exception {
+        return new AdvancedHTTPClient().httpGetMethod(context, Constants.URL_GET_CHANNEL_AND_BRANDS_LIST);
     }
 
-    public static JSONObject getGames() throws Exception {
-        return new AdvancedHTTPClient().httpGetMethod(Constants.URL_GET_ALL_GAMES_LIST);
+    public static JSONObject getGames(Context context) throws Exception {
+        return new AdvancedHTTPClient().httpGetMethod(context, Constants.URL_GET_ALL_GAMES_LIST);
     }
 
-    public static JSONObject getCheckoutStatusSession(JSONObject checkoutRes) throws Exception {
+    public static JSONObject getCheckoutStatusSession(Context context, JSONObject checkoutRes) throws Exception {
         String licenseCypherText = checkoutRes.getString("licenseCypherText");
-        return new AdvancedHTTPClient().httpGetMethodWithActionCode(Constants.URL_GET_CHECKOUT_STATUS_SESSION, licenseCypherText);
+        return new AdvancedHTTPClient().httpGetMethodWithActionCode(context, Constants.URL_GET_CHECKOUT_STATUS_SESSION, licenseCypherText);
     }
 
-    public static JSONObject getCheckoutStatusGlobal(JSONObject checkoutRes) throws Exception {
+    public static JSONObject getCheckoutStatusGlobal(Context context, JSONObject checkoutRes) throws Exception {
         String licenseCypherText = checkoutRes.getString("licenseCypherText");
-        return new AdvancedHTTPClient().httpGetMethodWithActionCode(Constants.URL_GLOBAL_CHECKOUT_GETTING, licenseCypherText);
+        return new AdvancedHTTPClient().httpGetMethodWithActionCode(context, Constants.URL_GLOBAL_CHECKOUT_GETTING, licenseCypherText);
     }
 
-    public static JSONObject getRewards() throws Exception{
-        return  new AdvancedHTTPClient().httpGetMethod(Constants.URL_GET_REWARDS);
+    public static JSONObject getRewards(Context context) throws Exception{
+        return  new AdvancedHTTPClient().httpGetMethod(context, Constants.URL_GET_REWARDS);
     }
 
-    public static JSONObject getRetailerByLocation(String uuid) throws Exception {
-        return new AdvancedHTTPClient().httpGetBrandMethod(Constants.URL_GET_RETAILER_BY_LOCATION+uuid+"/"+Constants.GEO_LATITUDE+"/"+Constants.GEO_LONGITUDE+"/"+Constants.MIN_DISTANCE_RETAILER);
+    public static JSONObject getRetailerByLocation(Context context, String uuid) throws Exception {
+        return new AdvancedHTTPClient().httpGetBrandMethod(context, Constants.URL_GET_RETAILER_BY_LOCATION+uuid+"/"+Constants.GEO_LATITUDE+"/"+Constants.GEO_LONGITUDE+"/"+Constants.MIN_DISTANCE_RETAILER);
     }
 
-    public static JSONObject giftcardClaim(JSONObject cardItem, String uuid, double amountClaimed, String validationCode) throws Exception {
+    public static JSONObject giftcardClaim(Context context, JSONObject cardItem, String uuid, double amountClaimed, String validationCode) throws Exception {
 
         Log.d(TAG, "giftcardClaim() called with: cardItem = [" + cardItem + "], uuid = [" + uuid + "], amountClaimed = [" + amountClaimed + "]");
 
@@ -388,23 +390,23 @@ public class APIInterface {
         postParams.put("createdOn", currentDateTimeString);
         postParams.put("data", midParams);
 
-        return new AdvancedHTTPClient().httpPostMethod(Constants.URL_CLAIM_GIFTCARD, postParams.toString());
+        return new AdvancedHTTPClient().httpPostMethod(context, Constants.URL_CLAIM_GIFTCARD, postParams.toString());
     }
 
-    public static JSONObject getConfiguration() throws Exception {
-        return new AdvancedHTTPClient().httpGetMethod(Constants.URL_HOCKEY_APP_ID);
+    public static JSONObject getConfiguration(Context context) throws Exception {
+        return new AdvancedHTTPClient().httpGetMethod(context, Constants.URL_HOCKEY_APP_ID);
     }
 
-    public static JSONObject socialConnect(String playerSocialLicenceCodeCypherText) throws Exception {
+    public static JSONObject socialConnect(Context context, String playerSocialLicenceCodeCypherText) throws Exception {
         JSONObject postParams = new JSONObject();
         JSONObject midParams = new JSONObject();
         midParams.put("playerSocialLicenceCodeCypherText", playerSocialLicenceCodeCypherText);
         postParams.put("data", midParams);
-        return new AdvancedHTTPClient().httpPostMethod(Constants.URL_SOCIAL_CONNECT,postParams.toString());
+        return new AdvancedHTTPClient().httpPostMethod(context, Constants.URL_SOCIAL_CONNECT,postParams.toString());
     }
 
 
-    public static JSONObject couponItem(JSONObject cardItem, String uuid, String validationCode) throws Exception {
+    public static JSONObject couponItem(Context context, JSONObject cardItem, String uuid, String validationCode) throws Exception {
 
         Log.d(TAG, "giftcardClaim() called with: cardItem = [" + cardItem + "], uuid = [" + uuid + "]");
 
@@ -427,9 +429,9 @@ public class APIInterface {
         postParams.put("createdOn", currentDateTimeString);
         postParams.put("data", midParams);
 
-        return new AdvancedHTTPClient().httpPostMethod(Constants.URL_COUPON, postParams.toString());
+        return new AdvancedHTTPClient().httpPostMethod(context, Constants.URL_COUPON, postParams.toString());
     }
-    public static JSONObject getProximityUrl() throws Exception {
-        return new AdvancedHTTPClient().httpGetMethod(Constants.URL_GET_PROXIMITY_DATA);
+    public static JSONObject getProximityUrl(Context context) throws Exception {
+        return new AdvancedHTTPClient().httpGetMethod(context, Constants.URL_GET_PROXIMITY_DATA);
     }
 }

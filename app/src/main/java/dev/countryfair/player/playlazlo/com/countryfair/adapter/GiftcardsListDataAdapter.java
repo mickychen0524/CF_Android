@@ -3,18 +3,14 @@ package dev.countryfair.player.playlazlo.com.countryfair.adapter;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -34,35 +30,24 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.common.BitMatrix;
 
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.net.URL;
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import cn.refactor.lib.colordialog.ColorDialog;
 import cn.refactor.lib.colordialog.PromptDialog;
-import dev.countryfair.player.playlazlo.com.countryfair.CheckoutFileDownloadActivity;
 import dev.countryfair.player.playlazlo.com.countryfair.GiftCardDetailsActivity;
 import dev.countryfair.player.playlazlo.com.countryfair.GiftcardCheckoutFileDownloadActivity;
 import dev.countryfair.player.playlazlo.com.countryfair.R;
-import dev.countryfair.player.playlazlo.com.countryfair.ShoppingCartListActivity;
-import dev.countryfair.player.playlazlo.com.countryfair.TicketRefundActivity;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.APIInterface;
-import dev.countryfair.player.playlazlo.com.countryfair.helper.AdvancedHTTPClient;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.AndroidUtilities;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.AppHelper;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.Constants;
 import dev.countryfair.player.playlazlo.com.countryfair.service.GiftcardCheckoutStatusGettingService;
 import dev.countryfair.player.playlazlo.com.countryfair.service.ServiceResultReceiver;
-import pl.droidsonroids.gif.GifDrawable;
 
 /**
  * Created by mymac on 3/21/17.
@@ -303,7 +288,7 @@ public class GiftcardsListDataAdapter extends ArrayAdapter<JSONObject> {
                 try {
                     int simulationType = sharePref.getBoolean("isSystemGenerated", true) ? 9 : 0;
                     String uuid = AndroidUtilities.getUUID(context);
-                    receivedObj = APIInterface.checkoutWithShopping(channelData, f_playPrice, simulationType, uuid);
+                    receivedObj = APIInterface.checkoutWithShopping(context, channelData, f_playPrice, simulationType, uuid);
                     context.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -542,7 +527,7 @@ public class GiftcardsListDataAdapter extends ArrayAdapter<JSONObject> {
             public void run() {
                 try {
                     String uuid = AndroidUtilities.getUUID(context);
-                    receivedObj = APIInterface.checkoutCancel(obj, uuid);
+                    receivedObj = APIInterface.checkoutCancel(context, obj, uuid);
                     context.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

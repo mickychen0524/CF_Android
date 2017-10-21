@@ -36,13 +36,20 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
+import cn.refactor.lib.colordialog.PromptDialog;
 import dev.countryfair.player.playlazlo.com.countryfair.R;
 import dev.countryfair.player.playlazlo.com.countryfair.TicketDetailActivty;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.APIInterface;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.AndroidUtilities;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.Constants;
+
+import static android.view.View.GONE;
 
 /**
  * Created by mymac on 3/21/17.
@@ -59,10 +66,12 @@ public class GiftcardDownloadedListAdapter extends ArrayAdapter<JSONObject> {
     private float startY;
     private int CLICK_ACTION_THRESHHOLD = 100;
 
+    DateFormat format;
     public GiftcardDownloadedListAdapter(Activity context, List<JSONObject> cardsDataList) {
         super(context, R.layout.giftcard_downloaded_row, cardsDataList);
         this.context = context;
         this.cardsDataList = cardsDataList;
+        format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
     }
 
     @Override
@@ -73,10 +82,12 @@ public class GiftcardDownloadedListAdapter extends ArrayAdapter<JSONObject> {
         View rowView = inflater.inflate(R.layout.giftcard_downloaded_row, null, true);
         TextView txtName = (TextView) rowView.findViewById(R.id.giftcards_checked_name_txt);
         TextView txtPrice = (TextView) rowView.findViewById(R.id.giftcard_checked_price_txt);
+        TextView dateField = (TextView) rowView.findViewById(R.id.date_field);
         final ImageView imageView = (ImageView) rowView.findViewById(R.id.giftcards_checked_tile_image);
 
 
         if (cardItem.has("giftItemObj")) {
+            dateField.setVisibility(GONE);
 
             rowView.findViewById(R.id.giftcard_checked_list_redeem_btn).setVisibility(View.VISIBLE);
 
@@ -86,7 +97,7 @@ public class GiftcardDownloadedListAdapter extends ArrayAdapter<JSONObject> {
 
                 JSONObject giftItemObj = cardItem.getJSONObject("giftItemObj");
                 txtName.setText(giftItemObj.getString("merchantName"));
-                txtPrice.setText("$" + String.valueOf(cardItem.getDouble("value")));
+                txtPrice.setText(String.format( "$%.2f", cardItem.getDouble("value")));
                 fileName = cardItem.getString("fileName");
                 final File staticImgFile = new File(localFilePathForGiftcard + fileName);
 
@@ -124,12 +135,14 @@ public class GiftcardDownloadedListAdapter extends ArrayAdapter<JSONObject> {
             }
         } else {
 //            rowView.findViewById(R.id.giftcard_checked_list_redeem_btn).setVisibility(View.GONE);
-
             final String localFilePathForCoupons = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + Constants.DIR_ROOT + "/" + Constants.DIR_COUPONS + "/";
             try {
 
+                Date date = new SimpleDateFormat("yyy-MM-dd'T'HH:mm:ss.SSSSSSSZ", Locale.getDefault()).parse(cardItem.getString("claimExpireOn"));
+                dateField.setText("Expires " + format.format(date));
+
                 txtName.setText(cardItem.getString("fileName"));
-                txtPrice.setText("$" + String.valueOf(cardItem.getDouble("value")));
+                txtPrice.setText(String.format( "$%.2f", cardItem.getDouble("value")));
                 final String fileName = cardItem.getString("fileName");
                 final File staticImgFile = new File(localFilePathForCoupons + fileName);
 
@@ -272,7 +285,7 @@ public class GiftcardDownloadedListAdapter extends ArrayAdapter<JSONObject> {
 
         Bitmap decodedByte = null;
         try {
-            JSONObject receivedClaimObject = APIInterface.giftcardClaim(cardItem, AndroidUtilities.getUUID(context), amountClaimed, validationCode);
+            JSONObject receivedClaimObject = APIInterface.giftcardClaim(context, cardItem, AndroidUtilities.getUUID(context), amountClaimed, validationCode);
 
             if (receivedClaimObject != null) {
 
@@ -302,20 +315,33 @@ public class GiftcardDownloadedListAdapter extends ArrayAdapter<JSONObject> {
 
         Bitmap decodedByte = null;
         try {
-            JSONObject receivedClaimObject = APIInterface.couponItem(cardItem, AndroidUtilities.getUUID(context), validationCode);
+            JSONObject receivedClaimObject = APIInterface.couponItem(context, cardItem, AndroidUtilities.getUUID(context), validationCode);
             if (receivedClaimObject != null) {
                 JSONObject data = receivedClaimObject.getJSONObject("data");
                 String imageString = data.getString("qrCodeBase64");
                 byte[] decodedString = Base64.decode(imageString, Base64.DEFAULT);
                 decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                displayQRDialog(decodedByte, cardItem, imageFile);
+            } else {
+                PromptDialog promptDialog = new PromptDialog(context)
+                        .setDialogType(PromptDialog.DIALOG_TYPE_WRONG)
+                        .setAnimationEnable(true)
+                        .setTitleText(Constants.ERROR_TITLE)
+                        .setContentText("This Coupon has already been Claimed.")
+                        .setPositiveListener("Ok", new PromptDialog.OnPositiveListener() {
+                            @Override
+                            public void onClick(PromptDialog dialog) {
+                                dialog.dismiss();
+                            }
+                        });
+                promptDialog.setCancelable(true);
+                promptDialog.setCanceledOnTouchOutside(true);
+                promptDialog.show();
             }
             Log.d(TAG, "couponItem: " + receivedClaimObject);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        displayQRDialog(decodedByte, cardItem, imageFile);
-
     }
 
     private void displayQRDialog(final Bitmap qrcodeImage, final JSONObject cardItem, final File imageFile) {

@@ -137,7 +137,7 @@ public class SendBleDataService extends IntentService {
 
     private String getProximityUrl() {
         try {
-            JSONObject obj = APIInterface.getProximityUrl();
+            JSONObject obj = APIInterface.getProximityUrl(getApplicationContext());
             Log.d(TAG, "getProximityUrl: "+obj);
             if (obj!=null&&obj.has("data"))
                 return obj.getString("data");

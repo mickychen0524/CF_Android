@@ -65,7 +65,7 @@ public class SetInitialVarsOnLocal {
         editor.putString("SocialXGetYLicenseCodes", "");
 
 
-        editor.putString("hockeyAppId", "");
+        editor.putString("hockeyAppIdAndroid", "");
         editor.putString("ocrLicenseCodeAndroid", "");
 
         editor.apply();

@@ -1,17 +1,13 @@
 package dev.countryfair.player.playlazlo.com.countryfair;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.telephony.TelephonyManager;
-import android.util.Base64;
 import android.util.Log;
-import android.view.View;
 import android.view.Window;
 import android.widget.ListView;
 import android.widget.RadioGroup;
@@ -19,20 +15,15 @@ import android.widget.RadioGroup;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import cn.refactor.lib.colordialog.ColorDialog;
 import cn.refactor.lib.colordialog.PromptDialog;
 import dev.countryfair.player.playlazlo.com.countryfair.adapter.TicketListAdapter;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.APIInterface;
-import dev.countryfair.player.playlazlo.com.countryfair.helper.AdvancedHTTPClient;
-import dev.countryfair.player.playlazlo.com.countryfair.helper.AeSimpleSHA1;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.AndroidUtilities;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.AppHelper;
-import dev.countryfair.player.playlazlo.com.countryfair.helper.AppStringHelper;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.Constants;
 import info.hoang8f.android.segmented.SegmentedGroup;
 
@@ -177,7 +168,7 @@ public class TicketListActivity extends AppCompatActivity implements RadioGroup.
                 public void run() {
                     try {
                         String uuid = AndroidUtilities.getUUID(TicketListActivity.this);
-                        receivedObj = APIInterface.ticketValidate(ticketItem,uuid);
+                        receivedObj = APIInterface.ticketValidate(TicketListActivity.this, ticketItem,uuid);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {

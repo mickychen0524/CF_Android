@@ -38,7 +38,7 @@ public class SocialConnectService extends Service {
             @Override
             public void run() {
                 try {
-                    final JSONObject receivedObj = APIInterface.socialConnect(code);
+                    final JSONObject receivedObj = APIInterface.socialConnect(getApplicationContext(), code);
                     if(receivedObj!=null){
                         Log.d(TAG, "socialConnect: "+receivedObj.toString());
                         showToast("Social Connect Success!");

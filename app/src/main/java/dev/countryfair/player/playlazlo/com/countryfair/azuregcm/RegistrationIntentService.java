@@ -9,13 +9,10 @@ import android.widget.Toast;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.microsoft.windowsazure.messaging.NotificationHub;
 
 import org.json.JSONObject;
 
-import dev.countryfair.player.playlazlo.com.countryfair.azuregcm.NotificationSettings;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.APIInterface;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.AndroidUtilities;
 
@@ -86,7 +83,7 @@ public class RegistrationIntentService extends IntentService {
                     editor.putString("deviceTokenForPush", regID);
                     editor.apply();
                     String uuid = AndroidUtilities.getUUID(RegistrationIntentService.this);
-                    final JSONObject receivedObj = APIInterface.registerPushNotification(regID,uuid);
+                    final JSONObject receivedObj = APIInterface.registerPushNotification(RegistrationIntentService.this.getApplicationContext(), regID,uuid);
                     if (receivedObj != null) {
                         try {
                             JSONObject jsonData = receivedObj.getJSONObject("data");

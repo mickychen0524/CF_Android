@@ -1,15 +1,12 @@
 package dev.countryfair.player.playlazlo.com.countryfair.fragment;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.telephony.TelephonyManager;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,23 +18,17 @@ import android.widget.RadioGroup;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import cn.refactor.lib.colordialog.ColorDialog;
 import cn.refactor.lib.colordialog.PromptDialog;
 import dev.countryfair.player.playlazlo.com.countryfair.R;
-import dev.countryfair.player.playlazlo.com.countryfair.TicketListActivity;
 import dev.countryfair.player.playlazlo.com.countryfair.TicketValidationActivity;
 import dev.countryfair.player.playlazlo.com.countryfair.adapter.TicketListAdapter;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.APIInterface;
-import dev.countryfair.player.playlazlo.com.countryfair.helper.AdvancedHTTPClient;
-import dev.countryfair.player.playlazlo.com.countryfair.helper.AeSimpleSHA1;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.AndroidUtilities;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.AppHelper;
-import dev.countryfair.player.playlazlo.com.countryfair.helper.AppStringHelper;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.Constants;
 import info.hoang8f.android.segmented.SegmentedGroup;
 
@@ -178,7 +169,7 @@ public class OverRightFragment extends Fragment implements RadioGroup.OnCheckedC
 				public void run() {
 					try {
 						String uuid = AndroidUtilities.getUUID(getActivity());
-						receivedObj = APIInterface.ticketValidate(ticketItem,uuid);
+						receivedObj = APIInterface.ticketValidate(getActivity(), ticketItem,uuid);
 						getActivity().runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
