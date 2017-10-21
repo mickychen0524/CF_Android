@@ -10,6 +10,7 @@ import android.view.MotionEvent;
 import android.os.RemoteException;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -27,6 +28,7 @@ import org.altbeacon.beacon.Region;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -43,8 +45,12 @@ import dev.countryfair.player.playlazlo.com.countryfair.model.BeaconsItem;
 import dev.countryfair.player.playlazlo.com.countryfair.model.db.DiscoveredBeacons;
 import dev.countryfair.player.playlazlo.com.countryfair.service.SendBleDataService;
 import dev.countryfair.player.playlazlo.com.countryfair.swipeviewer.VerticalPager;
+import project.labs.avviotech.com.chatsdk.nearby.NearByUtil;
+import project.labs.avviotech.com.chatsdk.net.model.DeviceModel;
+import project.labs.avviotech.com.chatsdk.net.protocol.NearByProtocol;
 
-public class MainActivity extends ShakeDetectorActivity implements CentralFragment.OnCentralFragmentInteractionListener,BeaconConsumer{
+public class MainActivity extends ShakeDetectorActivity implements CentralFragment.OnCentralFragmentInteractionListener,BeaconConsumer,
+        NearByProtocol.DiscoveryProtocol{
 
     private static final int CENTRAL_PAGE_INDEX = 1;
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -54,6 +60,9 @@ public class MainActivity extends ShakeDetectorActivity implements CentralFragme
     private boolean isBond;
     private ArrayList<BeaconsItem> itemsToMonitor = null;
     private Set<BeaconsItem> discoveredItems = new HashSet<>();
+    private boolean isClicked = false;
+    private NearByUtil nearby;
+    private Button callButton;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +83,9 @@ public class MainActivity extends ShakeDetectorActivity implements CentralFragme
         displaySocialScanIfRequired();
         beaconManager.bind(this);
         SendBleDataService.startSend(this);
+
+        init();
+        click();
     }
 
     private void displaySocialScanIfRequired(){
@@ -247,5 +259,53 @@ public class MainActivity extends ShakeDetectorActivity implements CentralFragme
             return "near";
         else
             return "far";
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        nearby.start();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        nearby.stop();
+    }
+
+    @Override
+    public void onPeersFound(HashMap<String, DeviceModel> hashMap) {
+
+        HashMap<String,DeviceModel> clerkList = nearby.getClerkList();
+        if(!isClicked && clerkList.size() > 0)
+            callButton.setEnabled(true);
+    }
+
+    @Override
+    public void onDisconnect() {
+        isClicked = false;
+    }
+
+    public void init()
+    {
+        callButton = (Button)findViewById(R.id.main_bottom_chat_btn);
+        callButton.setEnabled(false);
+
+        nearby = NearByUtil.getInstance();
+        nearby.init(this, Build.MANUFACTURER,"client");
+        nearby.delegate = this;
+
+    }
+
+    public void click()
+    {
+        callButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                callButton.setEnabled(false);
+                nearby.startAdvertising();
+                isClicked = true;
+
+            }
+        });
     }
 }

@@ -17,4 +17,10 @@
         android:layout_height="match_parent"
         class="dev.countryfair.player.playlazlo.com.countryfair.fragment.CentralCompositeFragment" />
 
+    <Button
+        android:id="@+id/main_bottom_chat_btn"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/ic_chat" />
+
 </dev.countryfair.player.playlazlo.com.countryfair.swipeviewer.VerticalPager>
