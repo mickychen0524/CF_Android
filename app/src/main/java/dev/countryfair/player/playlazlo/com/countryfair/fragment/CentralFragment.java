@@ -3,6 +3,7 @@ package dev.countryfair.player.playlazlo.com.countryfair.fragment;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -860,7 +861,7 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
     public void init()
     {
         nearby = NearByUtil.getInstance();
-        nearby.init(getActivity(), Build.MANUFACTURER,"client");
+        nearby.init(getActivity(), getPhoneName(),"client");
         nearby.delegate = this;
         nearby.setActivity(getActivity());
         //mCallButton.setEnabled(false);
@@ -878,5 +879,12 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
 
             }
         });
+    }
+
+    public String getPhoneName()
+    {
+        BluetoothAdapter myDevice = BluetoothAdapter.getDefaultAdapter();
+        String deviceName = myDevice.getName();
+        return deviceName;
     }
 }
