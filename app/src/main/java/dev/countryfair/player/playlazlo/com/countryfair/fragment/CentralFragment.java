@@ -864,6 +864,7 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
         nearby.delegate = this;
         nearby.setActivity(getActivity());
         //mCallButton.setEnabled(false);
+
     }
 
     public void click()

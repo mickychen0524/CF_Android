@@ -164,5 +164,6 @@ dependencies {
     compile 'org.altbeacon:android-beacon-library:2+'
     compile 'org.greenrobot:greendao:3.2.2'
     compile project(":chat-sdk")
+    compile 'gun0912.ted:tedpermission:1.0.2'
 
 }
