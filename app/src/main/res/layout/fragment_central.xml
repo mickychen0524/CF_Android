@@ -87,4 +87,17 @@
         app:useCompatPadding="true"
         android:src="@drawable/ic_scan"/>
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/chat_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignRight="@+id/scan"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        app:backgroundTint="#018ac1"
+        app:fabSize="normal"
+        app:useCompatPadding="true"
+        android:src="@drawable/ic_chat"/>
+
 </RelativeLayout>
