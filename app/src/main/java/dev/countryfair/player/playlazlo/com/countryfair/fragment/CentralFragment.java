@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.os.Build;
@@ -835,7 +836,10 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
     public void onPeersFound(HashMap<String, DeviceModel> devices) {
         HashMap<String,DeviceModel> clerkList = nearby.getClerkList();
         if(!isClicked && clerkList.size() > 0)
+        {
             mCallButton.setEnabled(true);
+            mCallButton.setBackgroundColor(Color.YELLOW);
+        }
     }
 
     @Override
@@ -864,7 +868,7 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
         nearby.init(getActivity(), getPhoneName(),"client");
         nearby.delegate = this;
         nearby.setActivity(getActivity());
-        //mCallButton.setEnabled(false);
+        mCallButton.setEnabled(false);
 
     }
 
