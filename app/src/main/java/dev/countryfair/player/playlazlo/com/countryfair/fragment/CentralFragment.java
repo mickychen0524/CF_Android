@@ -832,6 +832,7 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
         mListener = null;
     }
 
+
     @Override
     public void onPeersFound(HashMap<String, DeviceModel> devices) {
         HashMap<String,DeviceModel> clerkList = nearby.getClerkList();
