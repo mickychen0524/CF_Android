@@ -118,7 +118,8 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
     private static String str_wasBorn = "";
     private String str_playerRegisterLisence = "";
     private JSONObject receivedObj;
-    private FloatingActionButton mScanButton,mCallButton;
+    private FloatingActionButton mScanButton;
+    private Button mCallButton;
     private static final int SCAN_REQUEST_CODE = 777;
     private int currentRegister = 0;
     private int maxRegisterNumber = 5;
@@ -141,7 +142,7 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
         ivStoreLocator = (ImageView) fragmentView.findViewById(R.id.ivStoreLocator);
         homePage = (WebView) fragmentView.findViewById(R.id.webview);
         mScanButton = (FloatingActionButton) fragmentView.findViewById(R.id.scan);
-        mCallButton = (FloatingActionButton) fragmentView.findViewById(R.id.chat_btn);
+        mCallButton = (Button) fragmentView.findViewById(R.id.chat_btn);
         mScanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -869,7 +870,7 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
         nearby.init(getActivity(), Build.MANUFACTURER,"client");
         nearby.delegate = this;
         nearby.setActivity(getActivity());
-        //mCallButton.setEnabled(false);
+        mCallButton.setEnabled(false);
 
     }
 

@@ -78,9 +78,8 @@
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/scan"
         android:layout_width="wrap_content"
-        android:visibility="gone"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
         android:layout_margin="@dimen/activity_horizontal_margin"
         app:backgroundTint="#018ac1"
@@ -88,16 +87,17 @@
         app:useCompatPadding="true"
         android:src="@drawable/ic_scan"/>
 
-    <android.support.design.widget.FloatingActionButton
+    
+
+    <Button
         android:id="@+id/chat_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_alignParentRight="true"
-        android:layout_alignRight="@+id/scan"
         android:layout_alignParentBottom="true"
-        android:layout_margin="@dimen/activity_horizontal_margin"
-        app:fabSize="normal"
-        app:useCompatPadding="true"
-        android:src="@drawable/ic_chat"/>
+        android:background="@drawable/ic_chat"
+        android:backgroundTint="#F37D19"/>
+
+
 
 </RelativeLayout>
