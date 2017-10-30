@@ -865,10 +865,10 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
     public void init()
     {
         nearby = NearByUtil.getInstance();
-        nearby.init(getActivity(), getPhoneName(),"client");
+        nearby.init(getActivity(), Build.MANUFACTURER,"client");
         nearby.delegate = this;
         nearby.setActivity(getActivity());
-        mCallButton.setEnabled(false);
+        //mCallButton.setEnabled(false);
 
     }
 
