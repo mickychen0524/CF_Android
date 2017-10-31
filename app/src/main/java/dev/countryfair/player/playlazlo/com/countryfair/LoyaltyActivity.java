@@ -1,6 +1,7 @@
 package dev.countryfair.player.playlazlo.com.countryfair;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.refactor.lib.colordialog.PromptDialog;
+import dev.countryfair.player.playlazlo.com.countryfair.database.ReceiptOCR;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.APIInterface;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.AppHelper;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.Constants;
@@ -42,12 +44,17 @@ public class LoyaltyActivity extends FragmentActivity {
     private LoyaltyListAdapter mLoyaltyListAdapter;
     private ProgressDialog mProgressDialog;
     private JSONObject receivedObj = new JSONObject();
+    private TextView historySize;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loyalty);
         init();
+
+        historySize = findViewById(R.id.historyCountLabel);
+        historySize.setText(
+                new ReceiptOCR(this).getHistoryItem().size() + "");
     }
 
     private void init(){
@@ -139,7 +146,10 @@ public class LoyaltyActivity extends FragmentActivity {
             Log.e("json_error-->", e.getMessage());
         }
     }
-
+    public void  historyButtonClicked (View view) {
+        Log.i("DevoloTest", "historyButtonClicked");
+        startActivity(new Intent(this, HistoryActivity.class));
+    }
 
 
     public class LoyaltyListAdapter extends RecyclerView.Adapter<LoyaltyListAdapter.ItemHolder>{

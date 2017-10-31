@@ -21,6 +21,35 @@
                     android:layout_marginTop="2dp"
                     android:src="@drawable/countryfairlogowhite"/>
 
+                <Button
+                    android:id="@+id/historyButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginRight="15dp"
+                    android:background="@android:color/transparent"
+                    android:onClick="historyButtonClicked"
+                    android:text="History"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/historyCountLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignEnd="@+id/historyButton"
+                    android:background="@drawable/background_green_circle"
+                    android:elevation="17dp"
+                    android:paddingBottom="2dp"
+                    android:paddingLeft="6dp"
+                    android:paddingRight="6dp"
+                    android:paddingTop="2dp"
+                    android:text="123"
+                    android:textColor="#be1414"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
             </RelativeLayout>
 
             <android.support.v7.widget.RecyclerView

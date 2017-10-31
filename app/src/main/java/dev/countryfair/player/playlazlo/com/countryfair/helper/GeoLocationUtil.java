@@ -5,6 +5,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -37,10 +38,13 @@ public class GeoLocationUtil {
             return false;
 
         try {
-            if(gps_enabled)
+            if (gps_enabled) {
+
                 lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListenerGps);
-            if(network_enabled)
+            }
+            if (network_enabled) {
                 lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListenerNetwork);
+            }
         } catch (SecurityException e) {
             e.printStackTrace();
         }
@@ -51,8 +55,10 @@ public class GeoLocationUtil {
 
     LocationListener locationListenerGps = new LocationListener() {
         public void onLocationChanged(Location location) {
+
             timer1.cancel();
             locationResult.gotLocation(location);
+            AppDelegate.getInstance().setLocation(location);
             lm.removeUpdates(this);
             lm.removeUpdates(locationListenerNetwork);
         }
@@ -63,10 +69,14 @@ public class GeoLocationUtil {
 
     LocationListener locationListenerNetwork = new LocationListener() {
         public void onLocationChanged(Location location) {
+
             timer1.cancel();
             locationResult.gotLocation(location);
+            AppDelegate.getInstance().setLocation(location);
+
             lm.removeUpdates(this);
             lm.removeUpdates(locationListenerGps);
+
         }
         public void onProviderDisabled(String provider) {}
         public void onProviderEnabled(String provider) {}

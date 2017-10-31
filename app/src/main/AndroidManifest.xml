@@ -5,7 +5,7 @@
 
     <uses-feature
         android:name="android.hardware.camera"
-        android:required="true" />
+        android:required="false" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -142,6 +142,10 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity android:name=".HistoryActivity"
+
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".StoreLocatorActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

@@ -42,9 +42,12 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import cn.refactor.lib.colordialog.PromptDialog;
@@ -53,6 +56,7 @@ import dev.countryfair.player.playlazlo.com.countryfair.MainActivity;
 import dev.countryfair.player.playlazlo.com.countryfair.R;
 import dev.countryfair.player.playlazlo.com.countryfair.StoreLocatorActivity;
 import dev.countryfair.player.playlazlo.com.countryfair.azuregcm.RegistrationService;
+import dev.countryfair.player.playlazlo.com.countryfair.database.ReceiptOCR;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.APIInterface;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.AndroidUtilities;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.ApiClient;
@@ -60,6 +64,7 @@ import dev.countryfair.player.playlazlo.com.countryfair.helper.AppDelegate;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.Constants;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.GeoLocationUtil;
 import dev.countryfair.player.playlazlo.com.countryfair.model.BeaconsItem;
+import dev.countryfair.player.playlazlo.com.countryfair.model.HistoryItem;
 import dev.countryfair.player.playlazlo.com.countryfair.model.ReceiptData;
 import dev.countryfair.player.playlazlo.com.countryfair.model.ReceiptOCRBody;
 import dev.countryfair.player.playlazlo.com.countryfair.model.ReceiptOCRProduct;
@@ -233,14 +238,10 @@ public class CentralFragment extends Fragment {
         final GeoLocationUtil.LocationResult geoLocationResult = new GeoLocationUtil.LocationResult() {
             @Override
             public void gotLocation(final Location location) {
-                new Thread()
-                {
-                    public void run()
-                    {
-                        mCenterActivity.runOnUiThread(new Runnable()
-                        {
-                            public void run()
-                            {
+                new Thread() {
+                    public void run() {
+                        mCenterActivity.runOnUiThread(new Runnable() {
+                            public void run() {
                                 //Do your UI operations like dialog opening or Toast here
                                 if (location != null) {
                                     Constants.GEO_LATITUDE = String.valueOf(location.getLatitude());
@@ -254,7 +255,7 @@ public class CentralFragment extends Fragment {
 //                                    new Handler(Looper.getMainLooper()).post(new Runnable() {
 //                                        @Override
 //                                        public void run() {
-                                            Toast.makeText(getActivity(), "Geo service is not working", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getActivity(), "Geo service is not working", Toast.LENGTH_SHORT).show();
 
 //                                        }
 //                                    });
@@ -703,12 +704,15 @@ public class CentralFragment extends Fragment {
                     if (response.isSuccessful()) {
                         ReceiptData data = response.body().getData();
                         uploadImageToServer(file, response.body(), results);
+                    } else {
+                        Toast.makeText(getContext(), "Oops! Receipt data failed!", Toast.LENGTH_SHORT).show();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ReceiptResponse> call, Throwable t) {
-
+                    t.printStackTrace();
+                    Toast.makeText(getContext(), "Oops! Receipt data failed!", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -728,25 +732,27 @@ public class CentralFragment extends Fragment {
         String lat;
         String lng;
 
-        //ReceiptRequestBody requestBody = new ReceiptRequestBody(receiptResponse.getData().getReceiptRefId(), scanResults, receiptResponse.getCorrelationRefId(), "", "");
+//        ReceiptRequestBody requestBody = new ReceiptRequestBody(receiptResponse.getData().getReceiptRefId(), scanResults, receiptResponse.getCorrelationRefId(), "", "");
 
         ApiClient.getInstance(getContext()).uploadReceiptImage(receiptResponse.getData().getSasUri(), headersMap, body).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 Log.d(TAG, "uploadImageToServer - onResponse - " + response.isSuccessful());
+                Toast.makeText(getContext(), "Receipt image uploaded!", Toast.LENGTH_SHORT).show();
                 uploadReceiptOCR(receiptResponse, scanResults, data.getReceiptRefId());
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.d(TAG, "uploadImageToServer - onFailure - ");
-                Toast.makeText(getContext(), "Failed to upload receipt. Please try again.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Oops! Receipt image failed.", Toast.LENGTH_SHORT).show();
                 t.printStackTrace();
             }
         });
     }
 
     private void uploadReceiptOCR(ReceiptResponse response, ScanResults results, String receiptRefId) {
+        //{"receiptRefId":"", "occurredOn":"", "receiptId":"", "lineItemsCount":12}
         Map<String, String> headersMap = new HashMap<>();
         headersMap.put("Lazlo-CorrelationRefId", response.getCorrelationRefId());
         headersMap.put("Accept-Type", "application/json");
@@ -761,7 +767,7 @@ public class CentralFragment extends Fragment {
             }
         }
         ocrBody.setLineItems(productList);
-
+//        productList.size();
         if (!"UNKNOWN".equals(results.retailerId().name())) {
             ocrBody.setRetailerId(results.retailerId().name());
         }
@@ -771,30 +777,40 @@ public class CentralFragment extends Fragment {
             ocrBody.setCreatedOn(results.purchaseDate().toString());
         }
 
+
         ocrBody.setOcrRaw(null);
         ocrBody.setReceiptRefId(receiptRefId);
-//        if (location != null) {
-            ReceiptRequestBody body = new ReceiptRequestBody(ocrBody, response.getCorrelationRefId(), "", "");
+        SimpleDateFormat dest = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+        Date date = results.purchaseDate();
+        String curDate = dest.format(date);
+        ocrBody.setCreatedOn(curDate);
 
+        new ReceiptOCR(getActivity()).addConfigItem(new HistoryItem(receiptRefId, curDate, results.receiptId(), String.valueOf(productList.size())));
+
+        if (location != null) {
+            ReceiptRequestBody body = new ReceiptRequestBody(ocrBody, response.getCorrelationRefId(), String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()));
             ApiClient.getInstance(getContext()).putReceiptOCR(headersMap, body).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     Log.d(TAG, "uploadReceiptOCR - onResponse - " + response.isSuccessful());
+                    Log.d(TAG, "uploadReceiptOCR - onResponse - " + response.message());
+
+
                     if (response.isSuccessful()) {
-                        Toast.makeText(getContext(), "Receipt uploaded successfully!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Receipt data uploaded!", Toast.LENGTH_SHORT).show();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
                     Log.d(TAG, "uploadReceiptOCR - onFailure - ");
-                    Toast.makeText(getContext(), "Failed to upload receipt. Please try again.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Oops! Receipt data failed!", Toast.LENGTH_SHORT).show();
                     t.printStackTrace();
                 }
             });
-//        } else {
-//            Toast.makeText(getContext(), "Failed to upload receipt. Please try again.", Toast.LENGTH_SHORT).show();
-//        }
+        } else {
+            Toast.makeText(getContext(), "Oops! This operation requires your current location. Turn on Location Services and try again.", Toast.LENGTH_SHORT).show();
+        }
     }
 
 

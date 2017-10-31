@@ -82,7 +82,7 @@ public class GettingRetailerListService extends IntentService {
     }
 
     private void getRetailerList() {
-
+        Log.i("DevolOTEst", "getRetailerList");
         final Location myLocation = new Location("My location");
         myLocation.setLatitude(Double.parseDouble(Constants.GEO_LATITUDE));
         myLocation.setLongitude(Double.parseDouble(Constants.GEO_LONGITUDE));
@@ -103,8 +103,8 @@ public class GettingRetailerListService extends IntentService {
                             e.printStackTrace();
                         }
                         if (retailers==null||retailers.size() == 0) {
-                            Thread.sleep(8000);
-                            getRetailerList();
+//                            Thread.sleep(8000);
+//                            getRetailerList();
                         } else {
 
                             double minDistanceInMeters = 10000000.0;
