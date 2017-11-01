@@ -280,26 +280,28 @@ public class GiftcardDownloadedListAdapter extends ArrayAdapter<JSONObject> {
             e.printStackTrace();
         }
         Bitmap bitmap = BitmapFactory.decodeStream(is);
-        final String validationCode = scanQRImage(bitmap);
-        Log.i(TAG, "validationCode: " + validationCode);
+        if (bitmap != null) {
 
-        Bitmap decodedByte = null;
-        try {
-            JSONObject receivedClaimObject = APIInterface.giftcardClaim(context, cardItem, AndroidUtilities.getUUID(context), amountClaimed, validationCode);
+            final String validationCode = scanQRImage(bitmap);
+            Log.i(TAG, "validationCode: " + validationCode);
 
-            if (receivedClaimObject != null) {
+            Bitmap decodedByte = null;
+            try {
+                JSONObject receivedClaimObject = APIInterface.giftcardClaim(context, cardItem, AndroidUtilities.getUUID(context), amountClaimed, validationCode);
 
-                JSONObject data = receivedClaimObject.getJSONObject("datax");
-                String imageString = data.getString("qrCodeBase64");
-                byte[] decodedString = Base64.decode(imageString, Base64.DEFAULT);
-                decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                if (receivedClaimObject != null) {
+
+                    JSONObject data = receivedClaimObject.getJSONObject("datax");
+                    String imageString = data.getString("qrCodeBase64");
+                    byte[] decodedString = Base64.decode(imageString, Base64.DEFAULT);
+                    decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                }
+                Log.d(TAG, "initiateClaim: " + receivedClaimObject);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            Log.d(TAG, "initiateClaim: " + receivedClaimObject);
-        } catch (Exception e) {
-            e.printStackTrace();
+            displayQRDialog(decodedByte, cardItem, imageFile);
         }
-
-        displayQRDialog(decodedByte, cardItem, imageFile);
     }
 
     private void coupon(final File imageFile, final JSONObject cardItem) {
@@ -310,37 +312,41 @@ public class GiftcardDownloadedListAdapter extends ArrayAdapter<JSONObject> {
             e.printStackTrace();
         }
         Bitmap bitmap = BitmapFactory.decodeStream(is);
-        final String validationCode = scanQRImage(bitmap);
-        Log.i(TAG, "validationCode: " + validationCode);
+        if (bitmap != null) {
+            final String validationCode = scanQRImage(bitmap);
+            Log.i(TAG, "validationCode: " + validationCode);
 
-        Bitmap decodedByte = null;
-        try {
-            JSONObject receivedClaimObject = APIInterface.couponItem(context, cardItem, AndroidUtilities.getUUID(context), validationCode);
-            if (receivedClaimObject != null) {
-                JSONObject data = receivedClaimObject.getJSONObject("data");
-                String imageString = data.getString("qrCodeBase64");
-                byte[] decodedString = Base64.decode(imageString, Base64.DEFAULT);
-                decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                displayQRDialog(decodedByte, cardItem, imageFile);
-            } else {
-                PromptDialog promptDialog = new PromptDialog(context)
-                        .setDialogType(PromptDialog.DIALOG_TYPE_WRONG)
-                        .setAnimationEnable(true)
-                        .setTitleText(Constants.ERROR_TITLE)
-                        .setContentText("This Coupon has already been Claimed.")
-                        .setPositiveListener("Ok", new PromptDialog.OnPositiveListener() {
-                            @Override
-                            public void onClick(PromptDialog dialog) {
-                                dialog.dismiss();
-                            }
-                        });
-                promptDialog.setCancelable(true);
-                promptDialog.setCanceledOnTouchOutside(true);
-                promptDialog.show();
+            Bitmap decodedByte = null;
+            try {
+                JSONObject receivedClaimObject = APIInterface.couponItem(context, cardItem, AndroidUtilities.getUUID(context), validationCode);
+                if (receivedClaimObject != null) {
+                    JSONObject data = receivedClaimObject.getJSONObject("data");
+                    String imageString = data.getString("qrCodeBase64");
+                    byte[] decodedString = Base64.decode(imageString, Base64.DEFAULT);
+                    decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                    displayQRDialog(decodedByte, cardItem, imageFile);
+                } else {
+                    PromptDialog promptDialog = new PromptDialog(context)
+                            .setDialogType(PromptDialog.DIALOG_TYPE_WRONG)
+                            .setAnimationEnable(true)
+                            .setTitleText(Constants.ERROR_TITLE)
+                            .setContentText("This Coupon has already been Claimed.")
+                            .setPositiveListener("Ok", new PromptDialog.OnPositiveListener() {
+                                @Override
+                                public void onClick(PromptDialog dialog) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    promptDialog.setCancelable(true);
+                    promptDialog.setCanceledOnTouchOutside(true);
+                    promptDialog.show();
+                }
+                Log.d(TAG, "couponItem: " + receivedClaimObject);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            Log.d(TAG, "couponItem: " + receivedClaimObject);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } else {
+
         }
     }
 

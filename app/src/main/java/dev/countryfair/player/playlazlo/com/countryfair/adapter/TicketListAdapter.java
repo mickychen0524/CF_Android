@@ -1,30 +1,27 @@
 package dev.countryfair.player.playlazlo.com.countryfair.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.daimajia.swipe.SimpleSwipeListener;
-import com.daimajia.swipe.SwipeLayout;
-import com.daimajia.swipe.adapters.BaseSwipeAdapter;
 
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,11 +31,7 @@ import dev.countryfair.player.playlazlo.com.countryfair.helper.AndroidUtilities;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.Constants;
 import pl.droidsonroids.gif.GifDrawable;
 
-/**
- * Created by mymac on 3/21/17.
- */
-
-public class TicketListAdapter extends BaseSwipeAdapter {
+public class TicketListAdapter extends ArrayAdapter<JSONObject> {
     private Context mContext;
 
     private List<JSONObject> ticketDataList = new ArrayList<JSONObject>();
@@ -47,30 +40,21 @@ public class TicketListAdapter extends BaseSwipeAdapter {
     private int CLICK_ACTION_THRESHHOLD = 100;
 
     public TicketListAdapter(Context mContext, List<JSONObject> ticketDataList) {
+        super(mContext, R.layout.ticket_list_row, ticketDataList);
+
         this.mContext = mContext;
         this.ticketDataList = ticketDataList;
     }
 
+
+    @NonNull
     @Override
-    public int getSwipeLayoutResourceId(int position) {
-        return R.id.ticket_list_item_swipe;
-    }
+    public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
+        View rowView = inflater.inflate(R.layout.ticket_list_row, null, true);
 
-    @Override
-    public View generateView(final int position, ViewGroup parent) {
-        View v = LayoutInflater.from(mContext).inflate(R.layout.ticket_list_row, null);
 
-        SwipeLayout swipeLayout = (SwipeLayout)v.findViewById(getSwipeLayoutResourceId(position));
-        swipeLayout.addDrag(SwipeLayout.DragEdge.Left, swipeLayout.findViewById(R.id.ticket_list_wrapper_left));
-
-        swipeLayout.addSwipeListener(new SimpleSwipeListener() {
-            @Override
-            public void onOpen(SwipeLayout layout) {
-                // swipe event listener
-            }
-        });
-
-        v.findViewById(R.id.ticket_delete).setOnClickListener(new View.OnClickListener() {
+        rowView.findViewById(R.id.ticket_delete).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -80,7 +64,7 @@ public class TicketListAdapter extends BaseSwipeAdapter {
             }
         });
 
-        v.findViewById(R.id.ticket_claim_btn).setOnClickListener(new View.OnClickListener() {
+        rowView.findViewById(R.id.ticket_claim_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(mOnTicketClaimListener != null){
@@ -89,7 +73,7 @@ public class TicketListAdapter extends BaseSwipeAdapter {
             }
         });
 
-        v.findViewById(R.id.ticket_delete_btn).setOnClickListener(new View.OnClickListener() {
+        rowView.findViewById(R.id.ticket_delete_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(mOnTicketDeleteListener != null){
@@ -98,18 +82,14 @@ public class TicketListAdapter extends BaseSwipeAdapter {
             }
         });
 
-        return v;
-    }
 
-    @Override
-    public void fillValues(final int position, final View convertView) {
         JSONObject ticketItem = ticketDataList.get(position);
 
-        ImageView tileImage = (ImageView) convertView.findViewById(R.id.ticket_list_tile_image);
-        ImageView logoImage = (ImageView) convertView.findViewById(R.id.ticket_list_gamelogo_image);
-        ImageView previewImage = (ImageView) convertView.findViewById(R.id.ticket_list_preview_img);
-        TextView ticketDateTxt = (TextView) convertView.findViewById(R.id.ticket_list_createdon_txt);
-        TextView ticketClaimStateTxt = (TextView) convertView.findViewById(R.id.ticket_claim_state_txt);
+        ImageView tileImage = (ImageView) rowView.findViewById(R.id.ticket_list_tile_image);
+        ImageView logoImage = (ImageView) rowView.findViewById(R.id.ticket_list_gamelogo_image);
+        ImageView previewImage = (ImageView) rowView.findViewById(R.id.ticket_list_preview_img);
+        TextView ticketDateTxt = (TextView) rowView.findViewById(R.id.ticket_list_createdon_txt);
+        TextView ticketClaimStateTxt = (TextView) rowView.findViewById(R.id.ticket_claim_state_txt);
 
         final String localFilePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/"+Constants.DIR_ROOT+"/";
         final String localFilePathForTicket = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/"+Constants.DIR_ROOT+"/"+Constants.DIR_TICKETS+"/";
@@ -174,33 +154,19 @@ public class TicketListAdapter extends BaseSwipeAdapter {
                     AndroidUtilities.loadImage(previewImage,ticketFile);
                 }
             }
-            convertView.setOnTouchListener(new View.OnTouchListener() {
+            rowView.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public boolean onTouch(View v, MotionEvent event) {
-
-                    switch (event.getAction()) {
-
-                        case MotionEvent.ACTION_DOWN:
-                            startX = event.getX();
-                            startY = event.getY();
-                            break;
-                        case MotionEvent.ACTION_UP:
-                            float endX = event.getX();
-                            float endY = event.getY();
-                            if (isAClick(startX, endX, startY, endY)) {
-                                Intent i = new Intent(mContext, TicketDetailActivty.class);
+                public void onClick(View v) {
+                    Intent i = new Intent(mContext, TicketDetailActivty.class);
                                 i.putExtra("ticketFilePath", localFilePathForTicket + fileName);
                                 mContext.startActivity(i);
-                            }
-                            break;
-                    }
-
-                    return false;
                 }
             });
         } catch (Exception e) {
             Log.e("ChannelGroup-->", e.getMessage());
         }
+
+        return rowView;
     }
 
     private boolean isAClick(float startX, float endX, float startY, float endY) {
@@ -217,10 +183,6 @@ public class TicketListAdapter extends BaseSwipeAdapter {
         return ticketDataList.size();
     }
 
-    @Override
-    public Object getItem(int position) {
-        return null;
-    }
 
     @Override
     public long getItemId(int position) {

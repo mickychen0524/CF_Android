@@ -1,5 +1,8 @@
 package dev.countryfair.player.playlazlo.com.countryfair.fragment;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,6 +15,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import dev.countryfair.player.playlazlo.com.countryfair.PushMessagesActivity;
 import dev.countryfair.player.playlazlo.com.countryfair.R;
@@ -72,6 +76,16 @@ public class NextOverLeftFragment extends Fragment implements CompoundButton.OnC
                 startActivity(new Intent(getActivity(), PushMessagesActivity.class));
             }
         });
+
+       playerLicenseCodeTxt.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+               ClipData clip = ClipData.newPlainText("text", playerLicenseCodeTxt.getText().toString());
+               clipboard.setPrimaryClip(clip);
+               Toast.makeText(getActivity(), "Copied to clipboard!", Toast.LENGTH_SHORT).show();
+           }
+       });
 
 		return fragmentView;
 	}
