@@ -842,6 +842,14 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
             mCallButton.setEnabled(true);
             mCallButton.setColorFilter(Color.parseColor("#0F76B4"));
         }
+        if(clerkList.size() == 0)
+        {
+            isClicked = false;
+            mCallButton.setEnabled(false);
+            mCallButton.setColorFilter(Color.argb(255,110,183,216));
+
+            nearby.stopSound();
+        }
     }
 
     @Override
