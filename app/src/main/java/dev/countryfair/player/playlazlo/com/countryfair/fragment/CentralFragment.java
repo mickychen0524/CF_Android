@@ -873,6 +873,12 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
     }
 
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+    }
+
     public void init()
     {
         nearby = NearByUtil.getInstance();
