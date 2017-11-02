@@ -3,12 +3,15 @@ package dev.countryfair.player.playlazlo.com.countryfair.fragment;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -82,6 +85,9 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import project.labs.avviotech.com.chatsdk.nearby.NearByUtil;
+import project.labs.avviotech.com.chatsdk.net.model.DeviceModel;
+import project.labs.avviotech.com.chatsdk.net.protocol.NearByProtocol;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -92,7 +98,7 @@ import static android.app.Activity.RESULT_OK;
  * Fragment to manage the central page of the 5 pages application navigation (top, center, bottom, left, right).
  */
 
-public class CentralFragment extends Fragment {
+public class CentralFragment extends Fragment implements NearByProtocol.DiscoveryProtocol{
 
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final String TAG = CentralFragment.class.getSimpleName();
@@ -110,11 +116,15 @@ public class CentralFragment extends Fragment {
     boolean loadingFinished = true;
     boolean redirect = false;
 
+    private NearByUtil nearby;
+    private boolean isClicked = false;
+
     private static int i_wasBorn = 30;
     private static String str_wasBorn = "";
     private String str_playerRegisterLisence = "";
     private JSONObject receivedObj;
     private FloatingActionButton mScanButton;
+    private ImageView mCallButton;
     private static final int SCAN_REQUEST_CODE = 777;
     private int currentRegister = 0;
     private int maxRegisterNumber = 5;
@@ -137,6 +147,7 @@ public class CentralFragment extends Fragment {
         ivStoreLocator = (ImageView) fragmentView.findViewById(R.id.ivStoreLocator);
         homePage = (WebView) fragmentView.findViewById(R.id.webview);
         mScanButton = (FloatingActionButton) fragmentView.findViewById(R.id.scan);
+        mCallButton = (ImageView) fragmentView.findViewById(R.id.chat_btn);
         mScanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -144,6 +155,9 @@ public class CentralFragment extends Fragment {
             }
         });
 
+
+        init();
+        click();
 
         homePage.getSettings().setUseWideViewPort(true);
         homePage.getSettings().setLoadWithOverviewMode(true);
@@ -833,5 +847,84 @@ public class CentralFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+
+    @Override
+    public void onPeersFound(HashMap<String, DeviceModel> devices) {
+        HashMap<String,DeviceModel> clerkList = nearby.getClerkList();
+        if(!isClicked && clerkList.size() > 0)
+        {
+            mCallButton.setEnabled(true);
+            mCallButton.setColorFilter(Color.parseColor("#0F76B4"));
+        }
+        if(clerkList.size() == 0)
+        {
+            isClicked = false;
+            mCallButton.setEnabled(false);
+            mCallButton.setColorFilter(Color.argb(255,110,183,216));
+
+            nearby.stopSound();
+        }
+    }
+
+    @Override
+    public void onDisconnect() {
+        isClicked = false;
+        mCallButton.setColorFilter(Color.argb(255,110,183,216));
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        nearby.start();
+
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        nearby.stop();
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+    }
+
+    public void init()
+    {
+        nearby = NearByUtil.getInstance();
+        nearby.init(getActivity(), Build.MANUFACTURER,"client");
+        nearby.delegate = this;
+        nearby.setActivity(getActivity());
+        mCallButton.setEnabled(false);
+        mCallButton.setColorFilter(Color.argb(200,110,183,216));
+
+    }
+
+    public void click()
+    {
+        mCallButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mCallButton.setEnabled(false);
+                nearby.startAdvertising();
+                isClicked = true;
+                mCallButton.setColorFilter(Color.argb(255,110,183,216));
+                nearby.playSound();
+
+            }
+        });
+    }
+
+    public String getPhoneName()
+    {
+        BluetoothAdapter myDevice = BluetoothAdapter.getDefaultAdapter();
+        String deviceName = myDevice.getName();
+        return deviceName;
     }
 }

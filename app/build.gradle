@@ -137,7 +137,8 @@ dependencies {
     compile 'com.google.firebase:firebase-core:10.2.0'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.5'
     compile "com.daimajia.swipelayout:library:1.2.0@aar"
-    compile 'com.google.android.gms:play-services:10.2.0'
+    compile 'com.google.android.gms:play-services:11.0.1'
+    compile 'com.google.android.gms:play-services-nearby:11.0.1'
     compile 'com.github.wseemann:FFmpegMediaMetadataRetriever:1.0.14'
     compile 'com.mikhaellopez:circularimageview:3.0.2'
     compile files('libs/myid3.jar')
@@ -162,5 +163,7 @@ dependencies {
     compile 'com.squareup:seismic:1.0.2'
     compile 'org.altbeacon:android-beacon-library:2+'
     compile 'org.greenrobot:greendao:3.2.2'
+    compile project(":chat-sdk")
+    compile 'gun0912.ted:tedpermission:1.0.2'
 
 }
