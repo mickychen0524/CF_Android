@@ -247,7 +247,7 @@
 
         <meta-data
             android:name="mobi.windfall.receipt.LicenseKey"
-            android:value="OTHS4AMV-LIPMZY6D-KDMFNOAX-5B3T7CB3-DPTWPCB3-DPTWPCB3-DPTWOKAA-7N3SMIVO" />
+            android:value="HJH3AXDB-TUHDEDSF-UW7JFDU6-JYKN35FB-6Z6FWIIV-7L5PV6X2-7L5PUWVM-2GNXVFQ6" />
 
         <service
             android:name=".service.ConfigService"
