@@ -8,6 +8,7 @@ import android.widget.Toast;
 import mobi.windfall.receipt.InitializeCallback;
 import mobi.windfall.receipt.ReceiptSdk;
 import mobi.windfall.receipt.SdkNotInitializedException;
+import project.labs.avviotech.com.chatsdk.nearby.NearByUtil;
 
 public class App extends Application {
 
@@ -55,5 +56,12 @@ public class App extends Application {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        NearByUtil nearby = NearByUtil.getInstance();
+        nearby.stop();
     }
 }

@@ -4,6 +4,8 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
@@ -16,6 +18,7 @@ import android.widget.Toast;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.Constants;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.SetInitialVarsOnLocal;
 import dev.countryfair.player.playlazlo.com.countryfair.service.ConfigService;
+import project.labs.avviotech.com.chatsdk.nearby.NearByUtil;
 
 /**
  * Created by mymac on 3/28/17.
@@ -34,6 +37,8 @@ public class PermissionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.permission_layout);
+
+        init();
 
         Button cameraPermissionBtn = (Button) findViewById(R.id.permission_camera_btn);
         cameraPermissionBtn.setOnClickListener(new View.OnClickListener() {
@@ -219,4 +224,13 @@ public class PermissionActivity extends AppCompatActivity {
     private void getConfiguration(){
         startService(new Intent(PermissionActivity.this, ConfigService.class));
     }
+
+    public void init()
+    {
+        NearByUtil nearby = NearByUtil.getInstance();
+        nearby.init(this, Build.MANUFACTURER,"client");
+        nearby.start();
+
+    }
+
 }

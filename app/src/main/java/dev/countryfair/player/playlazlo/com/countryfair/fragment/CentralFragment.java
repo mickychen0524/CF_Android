@@ -855,21 +855,18 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
     @Override
     public void onDisconnect() {
         isClicked = false;
-        mCallButton.setColorFilter(Color.argb(255,110,183,216));
+//        mCallButton.setColorFilter(Color.argb(255,110,183,216));
     }
 
     @Override
     public void onStart() {
         super.onStart();
         nearby.start();
-
-
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        nearby.stop();
     }
 
 
@@ -882,7 +879,6 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
     public void init()
     {
         nearby = NearByUtil.getInstance();
-        nearby.init((MainActivity) getActivity(), Build.MANUFACTURER,"client");
         nearby.delegate = this;
         nearby.setActivity((MainActivity) getActivity());
         mCallButton.setEnabled(false);
