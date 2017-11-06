@@ -882,9 +882,9 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
     public void init()
     {
         nearby = NearByUtil.getInstance();
-        nearby.init(getActivity(), Build.MANUFACTURER,"client");
+        nearby.init((MainActivity) getActivity(), Build.MANUFACTURER,"client");
         nearby.delegate = this;
-        nearby.setActivity(getActivity());
+        nearby.setActivity((MainActivity) getActivity());
         mCallButton.setEnabled(false);
         mCallButton.setColorFilter(Color.argb(200,110,183,216));
 
