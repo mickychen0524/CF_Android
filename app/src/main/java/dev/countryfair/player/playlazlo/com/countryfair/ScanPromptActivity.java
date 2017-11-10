@@ -106,9 +106,16 @@ public final class ScanPromptActivity extends AppCompatActivity implements Barco
         gestureDetector = new GestureDetector(this, new CaptureGestureListener());
         scaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
 
-        Snackbar.make(mGraphicOverlay, "Tap to capture. Pinch/Stretch to zoom",
-                Snackbar.LENGTH_LONG)
-                .show();
+        try
+        {
+            Snackbar.make(mGraphicOverlay, "Tap to capture. Pinch/Stretch to zoom",
+                    Snackbar.LENGTH_LONG)
+                    .show();
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+
     }
 
     /**
