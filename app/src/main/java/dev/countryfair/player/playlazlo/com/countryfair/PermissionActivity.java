@@ -38,7 +38,7 @@ public class PermissionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.permission_layout);
 
-        init();
+
 
         Button cameraPermissionBtn = (Button) findViewById(R.id.permission_camera_btn);
         cameraPermissionBtn.setOnClickListener(new View.OnClickListener() {
@@ -215,6 +215,7 @@ public class PermissionActivity extends AppCompatActivity {
         }
 
         if (camStateFlg && locStateFlg && stgStateFlg) {
+            init();
             Intent i = new Intent(PermissionActivity.this, MainActivity.class);
             startActivity(i);
             finish();
