@@ -191,6 +191,7 @@ public class PermissionActivity extends AppCompatActivity {
     }
 
     private void gotoMainPage() {
+        init();
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         camStateFlg = sharedPref.getBoolean("cameraState", false);
         locStateFlg = sharedPref.getBoolean("locationState", false);
