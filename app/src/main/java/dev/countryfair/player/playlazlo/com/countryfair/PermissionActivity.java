@@ -228,10 +228,6 @@ public class PermissionActivity extends AppCompatActivity {
 
     public void init()
     {
-        NearByUtil nearby = NearByUtil.getInstance();
-        nearby.init(this, Build.MANUFACTURER,"client");
-        nearby.start();
-
+        NearByUtil nearby = NearByUtil.getInstance(this,Build.MANUFACTURER,"client");
     }
-
 }

@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -18,8 +19,10 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -101,7 +104,7 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
 
     private TextView tvFeedback;
     private WebView homePage;
-
+    private final int RECORD_AUDIO = 101;
     private ViewPager pager;
     private MainActivity mCenterActivity;
     private ProgressDialog mProgressDialog;
@@ -855,12 +858,12 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
     @Override
     public void onDisconnect() {
         isClicked = false;
-//        mCallButton.setColorFilter(Color.argb(255,110,183,216));
     }
 
     @Override
     public void onStart() {
         super.onStart();
+        init();
         nearby.start();
     }
 
@@ -876,9 +879,10 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
 
     }
 
+
     public void init()
     {
-        nearby = NearByUtil.getInstance();
+        nearby = NearByUtil.getInstance((MainActivity) getActivity(),Build.MANUFACTURER,"client");
         nearby.delegate = this;
         nearby.setActivity((MainActivity) getActivity());
         mCallButton.setEnabled(false);
@@ -888,9 +892,21 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
 
     public void click()
     {
+
+
         mCallButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                if (ContextCompat.checkSelfPermission(getActivity(),
+                        android.Manifest.permission.RECORD_AUDIO)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+                    ActivityCompat.requestPermissions(getActivity(),
+                            new String[]{android.Manifest.permission.RECORD_AUDIO},
+                            RECORD_AUDIO);
+                }
+
                 mCallButton.setEnabled(false);
                 nearby.startAdvertising();
                 isClicked = true;
@@ -907,4 +923,28 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
         String deviceName = myDevice.getName();
         return deviceName;
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case RECORD_AUDIO: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+        }
+    }
+
+
 }

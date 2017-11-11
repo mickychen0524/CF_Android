@@ -2,6 +2,7 @@ package dev.countryfair.player.playlazlo.com.countryfair;
 
 import android.app.Application;
 import android.location.Location;
+import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -61,7 +62,8 @@ public class App extends Application {
     @Override
     public void onTerminate() {
         super.onTerminate();
-        NearByUtil nearby = NearByUtil.getInstance();
-        nearby.stop();
+        NearByUtil nearby = NearByUtil.getStaticInternalInstance();
+        if(nearby != null)
+            nearby.stop();
     }
 }
