@@ -864,7 +864,6 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
     public void onStart() {
         super.onStart();
         init();
-        nearby.start();
     }
 
     @Override
@@ -893,7 +892,7 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
     public void click()
     {
 
-
+        nearby.start();
         mCallButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -915,13 +914,6 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
 
             }
         });
-    }
-
-    public String getPhoneName()
-    {
-        BluetoothAdapter myDevice = BluetoothAdapter.getDefaultAdapter();
-        String deviceName = myDevice.getName();
-        return deviceName;
     }
 
     @Override
