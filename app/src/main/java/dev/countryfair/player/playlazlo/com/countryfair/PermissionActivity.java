@@ -215,7 +215,7 @@ public class PermissionActivity extends AppCompatActivity {
         }
 
         if (camStateFlg && locStateFlg && stgStateFlg) {
-            init();
+            //init();
             Intent i = new Intent(PermissionActivity.this, MainActivity.class);
             startActivity(i);
             finish();
