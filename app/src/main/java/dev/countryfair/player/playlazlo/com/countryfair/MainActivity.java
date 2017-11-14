@@ -2,6 +2,7 @@ package dev.countryfair.player.playlazlo.com.countryfair;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
@@ -76,9 +77,8 @@ public class MainActivity extends ShakeDetectorActivity implements CentralFragme
         NotificationsManager.handleNotifications(this, NotificationSettings.SenderId, MyHandler.class);
         findViews();
         displaySocialScanIfRequired();
-        //beaconManager.bind(this);
-
-        //SendBleDataService.startSend(this);
+        beaconManager.bind(this);
+        SendBleDataService.startSend(this);
     }
 
     private void displaySocialScanIfRequired(){
@@ -228,6 +228,8 @@ public class MainActivity extends ShakeDetectorActivity implements CentralFragme
         });
     }
 
+
+
     private void beaconFound(BeaconsItem item, Beacon b) {
         DiscoveredBeacons beacon = new DiscoveredBeacons(item.getBeaconRefId(),
                 item.getMajor(),item.getMinor(),b.getRssi(),b.getDistance(),getProximity(b.getDistance()),System.currentTimeMillis());
@@ -257,10 +259,5 @@ public class MainActivity extends ShakeDetectorActivity implements CentralFragme
     @Override
     protected void onStart() {
         super.onStart();
-    }
-
-    public void init()
-    {
-        NearByUtil nearby = NearByUtil.getInstance(this,Build.MANUFACTURER,"client");
     }
 }

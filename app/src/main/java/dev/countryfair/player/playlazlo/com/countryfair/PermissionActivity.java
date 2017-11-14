@@ -216,6 +216,7 @@ public class PermissionActivity extends AppCompatActivity {
         }
 
         if (camStateFlg && locStateFlg && stgStateFlg) {
+            init();
             Intent i = new Intent(PermissionActivity.this, MainActivity.class);
             startActivity(i);
             finish();
@@ -224,6 +225,13 @@ public class PermissionActivity extends AppCompatActivity {
 
     private void getConfiguration(){
         startService(new Intent(PermissionActivity.this, ConfigService.class));
+    }
+
+    public void init()
+    {
+        Log.i("Client","init permission");
+        NearByUtil nearby = NearByUtil.getInstance(this,Build.MANUFACTURER,"client");
+
     }
 
 

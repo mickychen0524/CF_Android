@@ -153,12 +153,6 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
             }
         });
 
-
-
-        init();
-        click();
-        populateData();
-
         homePage.getSettings().setUseWideViewPort(true);
         homePage.getSettings().setLoadWithOverviewMode(true);
 
@@ -168,6 +162,16 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
                 FeedbackManager.showFeedbackActivity(getActivity());
             }
         });
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                init();
+                click();
+                populateData();
+
+            }
+        },5000);
 
         homePage.setWebViewClient(new WebViewClient() {
 
@@ -915,11 +919,15 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
                             RECORD_AUDIO);
                 }
 
+                nearby.start();
+
 
 
 
             }
         });
+
+
     }
 
     @Override
