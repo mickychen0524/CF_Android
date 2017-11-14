@@ -3,9 +3,11 @@ package dev.countryfair.player.playlazlo.com.countryfair;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.os.RemoteException;
 import android.view.View;
@@ -43,6 +45,7 @@ import dev.countryfair.player.playlazlo.com.countryfair.model.BeaconsItem;
 import dev.countryfair.player.playlazlo.com.countryfair.model.db.DiscoveredBeacons;
 import dev.countryfair.player.playlazlo.com.countryfair.service.SendBleDataService;
 import dev.countryfair.player.playlazlo.com.countryfair.swipeviewer.VerticalPager;
+import project.labs.avviotech.com.chatsdk.nearby.NearByUtil;
 
 public class MainActivity extends ShakeDetectorActivity implements CentralFragment.OnCentralFragmentInteractionListener,BeaconConsumer{
 
@@ -60,6 +63,7 @@ public class MainActivity extends ShakeDetectorActivity implements CentralFragme
         beaconManager = BeaconManager.getInstanceForApplication(this);
         beaconManager.getBeaconParsers().add(new BeaconParser().
                 setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
+
         DbManager.clearExistingDataFlags(getApplicationContext());
         try {
             FeedbackManager.register(MainActivity.this, Constants.HOCKEY_APP_ID);
@@ -72,8 +76,9 @@ public class MainActivity extends ShakeDetectorActivity implements CentralFragme
         NotificationsManager.handleNotifications(this, NotificationSettings.SenderId, MyHandler.class);
         findViews();
         displaySocialScanIfRequired();
-        beaconManager.bind(this);
-        SendBleDataService.startSend(this);
+        //beaconManager.bind(this);
+
+        //SendBleDataService.startSend(this);
     }
 
     private void displaySocialScanIfRequired(){
@@ -247,5 +252,15 @@ public class MainActivity extends ShakeDetectorActivity implements CentralFragme
             return "near";
         else
             return "far";
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    public void init()
+    {
+        NearByUtil nearby = NearByUtil.getInstance(this,Build.MANUFACTURER,"client");
     }
 }

@@ -154,8 +154,10 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
         });
 
 
+
         init();
         click();
+        populateData();
 
         homePage.getSettings().setUseWideViewPort(true);
         homePage.getSettings().setLoadWithOverviewMode(true);
@@ -836,9 +838,8 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
         mListener = null;
     }
 
-
-    @Override
-    public void onPeersFound(HashMap<String, DeviceModel> devices) {
+    public void populateData()
+    {
         HashMap<String,DeviceModel> clerkList = nearby.getClerkList();
         if(!isClicked && clerkList.size() > 0)
         {
@@ -856,6 +857,11 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
     }
 
     @Override
+    public void onPeersFound(HashMap<String, DeviceModel> devices) {
+       populateData();
+    }
+
+    @Override
     public void onDisconnect() {
         isClicked = false;
     }
@@ -863,7 +869,6 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
     @Override
     public void onStart() {
         super.onStart();
-        init();
     }
 
     @Override
@@ -881,21 +886,25 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
 
     public void init()
     {
+        Log.i("Client","init from Centre Fragement");
         nearby = NearByUtil.getInstance((MainActivity) getActivity(),Build.MANUFACTURER,"client");
         nearby.delegate = this;
         nearby.setActivity((MainActivity) getActivity());
         mCallButton.setEnabled(false);
         mCallButton.setColorFilter(Color.argb(200,110,183,216));
-
     }
 
     public void click()
     {
-
-        nearby.start();
         mCallButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                mCallButton.setEnabled(false);
+                nearby.playSound();
+                nearby.startAdvertising();
+                isClicked = true;
+                mCallButton.setColorFilter(Color.argb(255,110,183,216));
 
                 if (ContextCompat.checkSelfPermission(getActivity(),
                         android.Manifest.permission.RECORD_AUDIO)
@@ -906,11 +915,8 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
                             RECORD_AUDIO);
                 }
 
-                mCallButton.setEnabled(false);
-                nearby.startAdvertising();
-                isClicked = true;
-                mCallButton.setColorFilter(Color.argb(255,110,183,216));
-                nearby.playSound();
+
+
 
             }
         });
@@ -937,6 +943,4 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
 
         }
     }
-
-
 }

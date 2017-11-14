@@ -41,6 +41,7 @@ import dev.countryfair.player.playlazlo.com.countryfair.androidvision.CameraSour
 import dev.countryfair.player.playlazlo.com.countryfair.androidvision.CameraSourcePreview;
 import dev.countryfair.player.playlazlo.com.countryfair.androidvision.GraphicOverlay;
 import dev.countryfair.player.playlazlo.com.countryfair.service.SocialConnectService;
+import project.labs.avviotech.com.chatsdk.nearby.NearByUtil;
 
 /**
  * Created by Dev01 on 10/4/2017.

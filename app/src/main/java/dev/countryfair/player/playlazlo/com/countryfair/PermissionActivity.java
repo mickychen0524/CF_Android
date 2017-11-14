@@ -11,6 +11,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -215,7 +216,6 @@ public class PermissionActivity extends AppCompatActivity {
         }
 
         if (camStateFlg && locStateFlg && stgStateFlg) {
-            //init();
             Intent i = new Intent(PermissionActivity.this, MainActivity.class);
             startActivity(i);
             finish();
@@ -226,8 +226,5 @@ public class PermissionActivity extends AppCompatActivity {
         startService(new Intent(PermissionActivity.this, ConfigService.class));
     }
 
-    public void init()
-    {
-        NearByUtil nearby = NearByUtil.getInstance(this,Build.MANUFACTURER,"client");
-    }
+
 }
