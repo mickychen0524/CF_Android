@@ -112,7 +112,7 @@ public class PermissionActivity extends AppCompatActivity {
 
     private void setStoragePermission() {
         ActivityCompat.requestPermissions(PermissionActivity.this,
-                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO},
+                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                 1);
     }
 
