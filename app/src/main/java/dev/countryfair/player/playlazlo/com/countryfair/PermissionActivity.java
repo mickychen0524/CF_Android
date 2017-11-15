@@ -1,14 +1,19 @@
 package dev.countryfair.player.playlazlo.com.countryfair;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -16,6 +21,7 @@ import android.widget.Toast;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.Constants;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.SetInitialVarsOnLocal;
 import dev.countryfair.player.playlazlo.com.countryfair.service.ConfigService;
+import project.labs.avviotech.com.chatsdk.nearby.NearByUtil;
 
 /**
  * Created by mymac on 3/28/17.
@@ -34,6 +40,8 @@ public class PermissionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.permission_layout);
+
+
 
         Button cameraPermissionBtn = (Button) findViewById(R.id.permission_camera_btn);
         cameraPermissionBtn.setOnClickListener(new View.OnClickListener() {
@@ -100,7 +108,7 @@ public class PermissionActivity extends AppCompatActivity {
 
     private void setLocationPermission() {
         ActivityCompat.requestPermissions(PermissionActivity.this,
-                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},
                 1);
     }
 
@@ -210,13 +218,22 @@ public class PermissionActivity extends AppCompatActivity {
         }
 
         if (camStateFlg && locStateFlg && stgStateFlg) {
+            init();
             Intent i = new Intent(PermissionActivity.this, MainActivity.class);
-            startActivity(i);
             finish();
+            startActivity(i);
         }
     }
 
     private void getConfiguration(){
         startService(new Intent(PermissionActivity.this, ConfigService.class));
     }
+
+    public void init()
+    {
+        Log.i("Client","init permission");
+        NearByUtil nearby = NearByUtil.getInstance(this,Build.MANUFACTURER,"client");
+    }
+
+
 }

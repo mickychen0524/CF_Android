@@ -41,6 +41,7 @@ import dev.countryfair.player.playlazlo.com.countryfair.androidvision.CameraSour
 import dev.countryfair.player.playlazlo.com.countryfair.androidvision.CameraSourcePreview;
 import dev.countryfair.player.playlazlo.com.countryfair.androidvision.GraphicOverlay;
 import dev.countryfair.player.playlazlo.com.countryfair.service.SocialConnectService;
+import project.labs.avviotech.com.chatsdk.nearby.NearByUtil;
 
 /**
  * Created by Dev01 on 10/4/2017.
@@ -106,9 +107,16 @@ public final class ScanPromptActivity extends AppCompatActivity implements Barco
         gestureDetector = new GestureDetector(this, new CaptureGestureListener());
         scaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
 
-        Snackbar.make(mGraphicOverlay, "Tap to capture. Pinch/Stretch to zoom",
-                Snackbar.LENGTH_LONG)
-                .show();
+        try
+        {
+            Snackbar.make(mGraphicOverlay, "Tap to capture. Pinch/Stretch to zoom",
+                    Snackbar.LENGTH_LONG)
+                    .show();
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+
     }
 
     /**

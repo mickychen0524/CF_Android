@@ -6,17 +6,22 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,12 +47,9 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import cn.refactor.lib.colordialog.PromptDialog;
@@ -56,7 +58,6 @@ import dev.countryfair.player.playlazlo.com.countryfair.MainActivity;
 import dev.countryfair.player.playlazlo.com.countryfair.R;
 import dev.countryfair.player.playlazlo.com.countryfair.StoreLocatorActivity;
 import dev.countryfair.player.playlazlo.com.countryfair.azuregcm.RegistrationService;
-import dev.countryfair.player.playlazlo.com.countryfair.database.ReceiptOCR;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.APIInterface;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.AndroidUtilities;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.ApiClient;
@@ -64,7 +65,6 @@ import dev.countryfair.player.playlazlo.com.countryfair.helper.AppDelegate;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.Constants;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.GeoLocationUtil;
 import dev.countryfair.player.playlazlo.com.countryfair.model.BeaconsItem;
-import dev.countryfair.player.playlazlo.com.countryfair.model.HistoryItem;
 import dev.countryfair.player.playlazlo.com.countryfair.model.ReceiptData;
 import dev.countryfair.player.playlazlo.com.countryfair.model.ReceiptOCRBody;
 import dev.countryfair.player.playlazlo.com.countryfair.model.ReceiptOCRProduct;
@@ -83,6 +83,8 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import project.labs.avviotech.com.chatsdk.nearby.NearByUtil;
+import project.labs.avviotech.com.chatsdk.net.model.DeviceModel;
+import project.labs.avviotech.com.chatsdk.net.protocol.NearByProtocol;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -93,7 +95,7 @@ import static android.app.Activity.RESULT_OK;
  * Fragment to manage the central page of the 5 pages application navigation (top, center, bottom, left, right).
  */
 
-public class CentralFragment extends Fragment {//implements NearByProtocol.DiscoveryProtocol{
+public class CentralFragment extends Fragment implements NearByProtocol.DiscoveryProtocol{
 
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final String TAG = CentralFragment.class.getSimpleName();
@@ -101,7 +103,7 @@ public class CentralFragment extends Fragment {//implements NearByProtocol.Disco
 
     private TextView tvFeedback;
     private WebView homePage;
-
+    private final int RECORD_AUDIO = 101;
     private ViewPager pager;
     private MainActivity mCenterActivity;
     private ProgressDialog mProgressDialog;
@@ -150,10 +152,6 @@ public class CentralFragment extends Fragment {//implements NearByProtocol.Disco
             }
         });
 
-
-//        init();
-//        click();
-
         homePage.getSettings().setUseWideViewPort(true);
         homePage.getSettings().setLoadWithOverviewMode(true);
 
@@ -163,6 +161,15 @@ public class CentralFragment extends Fragment {//implements NearByProtocol.Disco
                 FeedbackManager.showFeedbackActivity(getActivity());
             }
         });
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                init();
+                click();
+                populateData();
+            }
+        },5000);
 
         homePage.setWebViewClient(new WebViewClient() {
 
@@ -247,10 +254,14 @@ public class CentralFragment extends Fragment {//implements NearByProtocol.Disco
         final GeoLocationUtil.LocationResult geoLocationResult = new GeoLocationUtil.LocationResult() {
             @Override
             public void gotLocation(final Location location) {
-                new Thread() {
-                    public void run() {
-                        mCenterActivity.runOnUiThread(new Runnable() {
-                            public void run() {
+                new Thread()
+                {
+                    public void run()
+                    {
+                        mCenterActivity.runOnUiThread(new Runnable()
+                        {
+                            public void run()
+                            {
                                 //Do your UI operations like dialog opening or Toast here
                                 if (location != null) {
                                     Constants.GEO_LATITUDE = String.valueOf(location.getLatitude());
@@ -264,7 +275,7 @@ public class CentralFragment extends Fragment {//implements NearByProtocol.Disco
 //                                    new Handler(Looper.getMainLooper()).post(new Runnable() {
 //                                        @Override
 //                                        public void run() {
-                                    Toast.makeText(getActivity(), "Geo service is not working", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getActivity(), "Geo service is not working", Toast.LENGTH_SHORT).show();
 
 //                                        }
 //                                    });
@@ -393,6 +404,7 @@ public class CentralFragment extends Fragment {//implements NearByProtocol.Disco
 
                                     new Constants(getActivity());
                                     registerWithNotificationHubs();
+//									registerNotification();
                                     downloadSocialConnectionImage();
 
                                 } catch (Exception e) {
@@ -520,64 +532,64 @@ public class CentralFragment extends Fragment {//implements NearByProtocol.Disco
     }
 
     // register device notification on GCM
-//    private void registerNotification() {
-//        mProgressDialog = new ProgressDialog(getActivity());
-//        mProgressDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-//        mProgressDialog.setMessage("Notification Registering...");
-//        mProgressDialog.show();
-//        mProgressDialog.setCancelable(false);
-//        mProgressDialog.setCanceledOnTouchOutside(false);
-//        new Thread(new Runnable() {
-//            public void run() {
-//                try {
-//                    FirebaseApp.initializeApp(getActivity());
-//                    String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-//                    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-//                    SharedPreferences.Editor editor = sharedPref.edit();
-//                    editor.putString("deviceTokenForPush", refreshedToken);
-//                    editor.apply();
-//                    String uuid = AndroidUtilities.getUUID(getActivity());
-//                    receivedObj = APIInterface.registerPushNotification(getActivity(), refreshedToken, uuid);
-//                    getActivity().runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//
-//                            if (mProgressDialog.isShowing()) {
-//                                mProgressDialog.dismiss();
-//                            }
-//
-//                            if (receivedObj != null) {
-//                                try {
-//                                    JSONObject jsonData = receivedObj.getJSONObject("data");
-//                                    Toast.makeText(getActivity(), "Push Notification Registered", Toast.LENGTH_SHORT).show();
-//                                    downloadSocialConnectionImage();
-//
-//                                } catch (Exception e) {
-//                                    Toast.makeText(getActivity(), "Notification register error", Toast.LENGTH_SHORT).show();
-//                                    Log.d("json_e-->", e.getMessage());
-//                                }
-//
-//                            } else {
-//                                Toast.makeText(getActivity(), "Notification register error", Toast.LENGTH_SHORT).show();
-//                            }
-//
-//                        }
-//                    });
-//                } catch (Exception e) {
-//                    getActivity().runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            if (mProgressDialog.isShowing()) {
-//                                mProgressDialog.dismiss();
-//                            }
-//                            Toast.makeText(getActivity(), "Notification register error", Toast.LENGTH_SHORT).show();
-//                            downloadSocialConnectionImage();
-//                        }
-//                    });
-//                }
-//            }
-//        }).start();
-//    }
+    private void registerNotification() {
+        mProgressDialog = new ProgressDialog(getActivity());
+        mProgressDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        mProgressDialog.setMessage("Notification Registering...");
+        mProgressDialog.show();
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    FirebaseApp.initializeApp(getActivity());
+                    String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+                    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.putString("deviceTokenForPush", refreshedToken);
+                    editor.apply();
+                    String uuid = AndroidUtilities.getUUID(getActivity());
+                    receivedObj = APIInterface.registerPushNotification(getActivity(), refreshedToken, uuid);
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            if (mProgressDialog.isShowing()) {
+                                mProgressDialog.dismiss();
+                            }
+
+                            if (receivedObj != null) {
+                                try {
+                                    JSONObject jsonData = receivedObj.getJSONObject("data");
+                                    Toast.makeText(getActivity(), "Push Notification Registered", Toast.LENGTH_SHORT).show();
+                                    downloadSocialConnectionImage();
+
+                                } catch (Exception e) {
+                                    Toast.makeText(getActivity(), "Notification register error", Toast.LENGTH_SHORT).show();
+                                    Log.d("json_e-->", e.getMessage());
+                                }
+
+                            } else {
+                                Toast.makeText(getActivity(), "Notification register error", Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+                    });
+                } catch (Exception e) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mProgressDialog.isShowing()) {
+                                mProgressDialog.dismiss();
+                            }
+                            Toast.makeText(getActivity(), "Notification register error", Toast.LENGTH_SHORT).show();
+                            downloadSocialConnectionImage();
+                        }
+                    });
+                }
+            }
+        }).start();
+    }
 
     private void downloadSocialConnectionImage() {
         new Thread(new Runnable() {
@@ -704,27 +716,20 @@ public class CentralFragment extends Fragment {//implements NearByProtocol.Disco
     }
 
     private void getReceiptUploadUrl(Media media, final ScanResults results) {
-        Log.i("devoloTest", "getReceiptUploadUrl");
         if (media != null && media.items().size() > 0) {
             final File file = media.items().get(0);
             ApiClient.getInstance(getContext()).getUploadUrl().enqueue(new Callback<ReceiptResponse>() {
                 @Override
                 public void onResponse(Call<ReceiptResponse> call, Response<ReceiptResponse> response) {
-
                     if (response.isSuccessful()) {
-                        Log.i("devoloTest", "getReceiptUploadUrl response: " + response.body().getData());
-
                         ReceiptData data = response.body().getData();
                         uploadImageToServer(file, response.body(), results);
-                    } else {
-                        Toast.makeText(getContext(), "Oops! Receipt data failed!", Toast.LENGTH_SHORT).show();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ReceiptResponse> call, Throwable t) {
-                    t.printStackTrace();
-                    Toast.makeText(getContext(), "Oops! Receipt data failed!", Toast.LENGTH_SHORT).show();
+
                 }
             });
 
@@ -732,8 +737,6 @@ public class CentralFragment extends Fragment {//implements NearByProtocol.Disco
     }
 
     private void uploadImageToServer(File file, final ReceiptResponse receiptResponse, final ScanResults scanResults) {
-        Log.i("devoloTest", "uploadImageToServer");
-
         RequestBody reqFile = RequestBody.create(MediaType.parse("image/jpg"), file);
         MultipartBody.Part body = MultipartBody.Part.create(reqFile);
 
@@ -746,29 +749,25 @@ public class CentralFragment extends Fragment {//implements NearByProtocol.Disco
         String lat;
         String lng;
 
-//        ReceiptRequestBody requestBody = new ReceiptRequestBody(receiptResponse.getData().getReceiptRefId(), scanResults, receiptResponse.getCorrelationRefId(), "", "");
+        //ReceiptRequestBody requestBody = new ReceiptRequestBody(receiptResponse.getData().getReceiptRefId(), scanResults, receiptResponse.getCorrelationRefId(), "", "");
 
         ApiClient.getInstance(getContext()).uploadReceiptImage(receiptResponse.getData().getSasUri(), headersMap, body).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 Log.d(TAG, "uploadImageToServer - onResponse - " + response.isSuccessful());
-                Toast.makeText(getContext(), "Receipt image uploaded!", Toast.LENGTH_SHORT).show();
                 uploadReceiptOCR(receiptResponse, scanResults, data.getReceiptRefId());
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.d(TAG, "uploadImageToServer - onFailure - ");
-                Toast.makeText(getContext(), "Oops! Receipt image failed.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Failed to upload receipt. Please try again.", Toast.LENGTH_SHORT).show();
                 t.printStackTrace();
             }
         });
     }
 
     private void uploadReceiptOCR(ReceiptResponse response, ScanResults results, String receiptRefId) {
-        Log.i("devoloTest", "uploadReceiptOCR");
-
-        //{"receiptRefId":"", "occurredOn":"", "receiptId":"", "lineItemsCount":12}
         Map<String, String> headersMap = new HashMap<>();
         headersMap.put("Lazlo-CorrelationRefId", response.getCorrelationRefId());
         headersMap.put("Accept-Type", "application/json");
@@ -783,7 +782,7 @@ public class CentralFragment extends Fragment {//implements NearByProtocol.Disco
             }
         }
         ocrBody.setLineItems(productList);
-//        productList.size();
+
         if (!"UNKNOWN".equals(results.retailerId().name())) {
             ocrBody.setRetailerId(results.retailerId().name());
         }
@@ -793,40 +792,30 @@ public class CentralFragment extends Fragment {//implements NearByProtocol.Disco
             ocrBody.setCreatedOn(results.purchaseDate().toString());
         }
 
-
         ocrBody.setOcrRaw(null);
         ocrBody.setReceiptRefId(receiptRefId);
-        SimpleDateFormat dest = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
-        Date date = results.purchaseDate();
-        String curDate = dest.format(date);
-        ocrBody.setCreatedOn(curDate);
+//        if (location != null) {
+            ReceiptRequestBody body = new ReceiptRequestBody(ocrBody, response.getCorrelationRefId(), "", "");
 
-        new ReceiptOCR(getActivity()).addConfigItem(new HistoryItem(receiptRefId, curDate, results.receiptId(), String.valueOf(productList.size())));
-
-        if (location != null) {
-            ReceiptRequestBody body = new ReceiptRequestBody(ocrBody, response.getCorrelationRefId(), String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()));
             ApiClient.getInstance(getContext()).putReceiptOCR(headersMap, body).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     Log.d(TAG, "uploadReceiptOCR - onResponse - " + response.isSuccessful());
-                    Log.d(TAG, "uploadReceiptOCR - onResponse - " + response.message());
-
-
                     if (response.isSuccessful()) {
-                        Toast.makeText(getContext(), "Receipt data uploaded!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Receipt uploaded successfully!", Toast.LENGTH_SHORT).show();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
                     Log.d(TAG, "uploadReceiptOCR - onFailure - ");
-                    Toast.makeText(getContext(), "Oops! Receipt data failed!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Failed to upload receipt. Please try again.", Toast.LENGTH_SHORT).show();
                     t.printStackTrace();
                 }
             });
-        } else {
-            Toast.makeText(getContext(), "Oops! This operation requires your current location. Turn on Location Services and try again.", Toast.LENGTH_SHORT).show();
-        }
+//        } else {
+//            Toast.makeText(getContext(), "Failed to upload receipt. Please try again.", Toast.LENGTH_SHORT).show();
+//        }
     }
 
 
@@ -851,82 +840,116 @@ public class CentralFragment extends Fragment {//implements NearByProtocol.Disco
         mListener = null;
     }
 
+    public void populateData()
+    {
+        HashMap<String,DeviceModel> clerkList = nearby.getClerkList();
+        if(!isClicked && clerkList.size() > 0)
+        {
+            mCallButton.setEnabled(true);
+            mCallButton.setColorFilter(Color.parseColor("#0F76B4"));
+        }
+        if(clerkList.size() == 0)
+        {
+            isClicked = false;
+            mCallButton.setEnabled(false);
+            mCallButton.setColorFilter(Color.argb(255,110,183,216));
 
-//    @Override
-//    public void onPeersFound(HashMap<String, DeviceModel> devices) {
-//        HashMap<String,DeviceModel> clerkList = nearby.getClerkList();
-//        if(!isClicked && clerkList.size() > 0)
-//        {
-//            mCallButton.setEnabled(true);
-//            mCallButton.setColorFilter(Color.parseColor("#0F76B4"));
-//        }
-//        if(clerkList.size() == 0)
-//        {
-//            isClicked = false;
-//            mCallButton.setEnabled(false);
-//            mCallButton.setColorFilter(Color.argb(255,110,183,216));
-//
-//            nearby.stopSound();
-//        }
-//    }
-//
-//    @Override
-//    public void onDisconnect() {
-//        isClicked = false;
-//        mCallButton.setColorFilter(Color.argb(255,110,183,216));
-//    }
-//
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        nearby.start();
-//
-//
-//    }
-//
-//    @Override
-//    public void onStop() {
-//        super.onStop();
-//        nearby.stop();
-//    }
-//
-//
-//    @Override
-//    public void onDestroy() {
-//        super.onDestroy();
-//
-//    }
-//
-//    public void init()
-//    {
-//        nearby = NearByUtil.getInstance();
-//        nearby.init(getActivity(), Build.MANUFACTURER,"client");
-//        nearby.delegate = this;
-//        nearby.setActivity(getActivity());
-//        mCallButton.setEnabled(false);
-//        mCallButton.setColorFilter(Color.argb(200,110,183,216));
-//
-//    }
-//
-//    public void click()
-//    {
-//        mCallButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                mCallButton.setEnabled(false);
-//                nearby.startAdvertising();
-//                isClicked = true;
-//                mCallButton.setColorFilter(Color.argb(255,110,183,216));
-//                nearby.playSound();
-//
-//            }
-//        });
-//    }
-//
-//    public String getPhoneName()
-//    {
-//        BluetoothAdapter myDevice = BluetoothAdapter.getDefaultAdapter();
-//        String deviceName = myDevice.getName();
-//        return deviceName;
-//    }
+            nearby.stopSound();
+        }
+    }
+
+    @Override
+    public void onPeersFound(HashMap<String, DeviceModel> devices) {
+       populateData();
+    }
+
+    @Override
+    public void onDisconnect() {
+        isClicked = false;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+    }
+
+
+    public void init()
+    {
+        Log.i("Client","init from Centre Fragement");
+        nearby = NearByUtil.getInstance((MainActivity) getActivity(),Build.MANUFACTURER,"client");
+        nearby.start();
+        nearby.delegate = this;
+        nearby.setActivity((MainActivity) getActivity());
+        mCallButton.setEnabled(false);
+        mCallButton.setColorFilter(Color.argb(200,110,183,216));
+    }
+
+    public void click()
+    {
+        mCallButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                mCallButton.setEnabled(false);
+                nearby.playSound();
+                nearby.startAdvertising();
+                isClicked = true;
+                mCallButton.setColorFilter(Color.argb(255,110,183,216));
+
+                if (ContextCompat.checkSelfPermission(getActivity(),
+                        android.Manifest.permission.RECORD_AUDIO)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+                    ActivityCompat.requestPermissions(getActivity(),
+                            new String[]{android.Manifest.permission.RECORD_AUDIO},
+                            RECORD_AUDIO);
+                }
+
+                nearby.start();
+
+
+
+
+            }
+        });
+
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case RECORD_AUDIO: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+        }
+    }
+
+
 }

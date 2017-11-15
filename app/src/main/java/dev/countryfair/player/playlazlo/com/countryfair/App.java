@@ -2,12 +2,14 @@ package dev.countryfair.player.playlazlo.com.countryfair;
 
 import android.app.Application;
 import android.location.Location;
+import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
 import mobi.windfall.receipt.InitializeCallback;
 import mobi.windfall.receipt.ReceiptSdk;
 import mobi.windfall.receipt.SdkNotInitializedException;
+import project.labs.avviotech.com.chatsdk.nearby.NearByUtil;
 
 public class App extends Application {
 
@@ -55,5 +57,14 @@ public class App extends Application {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        Log.i("Client","App Terminated");
+        NearByUtil nearby = NearByUtil.getStaticInternalInstance();
+        if(nearby != null)
+            nearby.stop();
     }
 }
