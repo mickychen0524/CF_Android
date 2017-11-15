@@ -3,15 +3,12 @@ package dev.countryfair.player.playlazlo.com.countryfair.fragment;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -86,8 +83,6 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import project.labs.avviotech.com.chatsdk.nearby.NearByUtil;
-import project.labs.avviotech.com.chatsdk.net.model.DeviceModel;
-import project.labs.avviotech.com.chatsdk.net.protocol.NearByProtocol;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -98,7 +93,7 @@ import static android.app.Activity.RESULT_OK;
  * Fragment to manage the central page of the 5 pages application navigation (top, center, bottom, left, right).
  */
 
-public class CentralFragment extends Fragment implements NearByProtocol.DiscoveryProtocol{
+public class CentralFragment extends Fragment {//implements NearByProtocol.DiscoveryProtocol{
 
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final String TAG = CentralFragment.class.getSimpleName();
@@ -156,8 +151,8 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
         });
 
 
-        init();
-        click();
+//        init();
+//        click();
 
         homePage.getSettings().setUseWideViewPort(true);
         homePage.getSettings().setLoadWithOverviewMode(true);
@@ -398,7 +393,6 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
 
                                     new Constants(getActivity());
                                     registerWithNotificationHubs();
-//									registerNotification();
                                     downloadSocialConnectionImage();
 
                                 } catch (Exception e) {
@@ -526,64 +520,64 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
     }
 
     // register device notification on GCM
-    private void registerNotification() {
-        mProgressDialog = new ProgressDialog(getActivity());
-        mProgressDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        mProgressDialog.setMessage("Notification Registering...");
-        mProgressDialog.show();
-        mProgressDialog.setCancelable(false);
-        mProgressDialog.setCanceledOnTouchOutside(false);
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    FirebaseApp.initializeApp(getActivity());
-                    String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-                    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-                    SharedPreferences.Editor editor = sharedPref.edit();
-                    editor.putString("deviceTokenForPush", refreshedToken);
-                    editor.apply();
-                    String uuid = AndroidUtilities.getUUID(getActivity());
-                    receivedObj = APIInterface.registerPushNotification(getActivity(), refreshedToken, uuid);
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-
-                            if (mProgressDialog.isShowing()) {
-                                mProgressDialog.dismiss();
-                            }
-
-                            if (receivedObj != null) {
-                                try {
-                                    JSONObject jsonData = receivedObj.getJSONObject("data");
-                                    Toast.makeText(getActivity(), "Push Notification Registered", Toast.LENGTH_SHORT).show();
-                                    downloadSocialConnectionImage();
-
-                                } catch (Exception e) {
-                                    Toast.makeText(getActivity(), "Notification register error", Toast.LENGTH_SHORT).show();
-                                    Log.d("json_e-->", e.getMessage());
-                                }
-
-                            } else {
-                                Toast.makeText(getActivity(), "Notification register error", Toast.LENGTH_SHORT).show();
-                            }
-
-                        }
-                    });
-                } catch (Exception e) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (mProgressDialog.isShowing()) {
-                                mProgressDialog.dismiss();
-                            }
-                            Toast.makeText(getActivity(), "Notification register error", Toast.LENGTH_SHORT).show();
-                            downloadSocialConnectionImage();
-                        }
-                    });
-                }
-            }
-        }).start();
-    }
+//    private void registerNotification() {
+//        mProgressDialog = new ProgressDialog(getActivity());
+//        mProgressDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        mProgressDialog.setMessage("Notification Registering...");
+//        mProgressDialog.show();
+//        mProgressDialog.setCancelable(false);
+//        mProgressDialog.setCanceledOnTouchOutside(false);
+//        new Thread(new Runnable() {
+//            public void run() {
+//                try {
+//                    FirebaseApp.initializeApp(getActivity());
+//                    String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+//                    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+//                    SharedPreferences.Editor editor = sharedPref.edit();
+//                    editor.putString("deviceTokenForPush", refreshedToken);
+//                    editor.apply();
+//                    String uuid = AndroidUtilities.getUUID(getActivity());
+//                    receivedObj = APIInterface.registerPushNotification(getActivity(), refreshedToken, uuid);
+//                    getActivity().runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//
+//                            if (mProgressDialog.isShowing()) {
+//                                mProgressDialog.dismiss();
+//                            }
+//
+//                            if (receivedObj != null) {
+//                                try {
+//                                    JSONObject jsonData = receivedObj.getJSONObject("data");
+//                                    Toast.makeText(getActivity(), "Push Notification Registered", Toast.LENGTH_SHORT).show();
+//                                    downloadSocialConnectionImage();
+//
+//                                } catch (Exception e) {
+//                                    Toast.makeText(getActivity(), "Notification register error", Toast.LENGTH_SHORT).show();
+//                                    Log.d("json_e-->", e.getMessage());
+//                                }
+//
+//                            } else {
+//                                Toast.makeText(getActivity(), "Notification register error", Toast.LENGTH_SHORT).show();
+//                            }
+//
+//                        }
+//                    });
+//                } catch (Exception e) {
+//                    getActivity().runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            if (mProgressDialog.isShowing()) {
+//                                mProgressDialog.dismiss();
+//                            }
+//                            Toast.makeText(getActivity(), "Notification register error", Toast.LENGTH_SHORT).show();
+//                            downloadSocialConnectionImage();
+//                        }
+//                    });
+//                }
+//            }
+//        }).start();
+//    }
 
     private void downloadSocialConnectionImage() {
         new Thread(new Runnable() {
@@ -710,12 +704,16 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
     }
 
     private void getReceiptUploadUrl(Media media, final ScanResults results) {
+        Log.i("devoloTest", "getReceiptUploadUrl");
         if (media != null && media.items().size() > 0) {
             final File file = media.items().get(0);
             ApiClient.getInstance(getContext()).getUploadUrl().enqueue(new Callback<ReceiptResponse>() {
                 @Override
                 public void onResponse(Call<ReceiptResponse> call, Response<ReceiptResponse> response) {
+
                     if (response.isSuccessful()) {
+                        Log.i("devoloTest", "getReceiptUploadUrl response: " + response.body().getData());
+
                         ReceiptData data = response.body().getData();
                         uploadImageToServer(file, response.body(), results);
                     } else {
@@ -734,6 +732,8 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
     }
 
     private void uploadImageToServer(File file, final ReceiptResponse receiptResponse, final ScanResults scanResults) {
+        Log.i("devoloTest", "uploadImageToServer");
+
         RequestBody reqFile = RequestBody.create(MediaType.parse("image/jpg"), file);
         MultipartBody.Part body = MultipartBody.Part.create(reqFile);
 
@@ -766,6 +766,8 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
     }
 
     private void uploadReceiptOCR(ReceiptResponse response, ScanResults results, String receiptRefId) {
+        Log.i("devoloTest", "uploadReceiptOCR");
+
         //{"receiptRefId":"", "occurredOn":"", "receiptId":"", "lineItemsCount":12}
         Map<String, String> headersMap = new HashMap<>();
         headersMap.put("Lazlo-CorrelationRefId", response.getCorrelationRefId());
@@ -850,81 +852,81 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
     }
 
 
-    @Override
-    public void onPeersFound(HashMap<String, DeviceModel> devices) {
-        HashMap<String,DeviceModel> clerkList = nearby.getClerkList();
-        if(!isClicked && clerkList.size() > 0)
-        {
-            mCallButton.setEnabled(true);
-            mCallButton.setColorFilter(Color.parseColor("#0F76B4"));
-        }
-        if(clerkList.size() == 0)
-        {
-            isClicked = false;
-            mCallButton.setEnabled(false);
-            mCallButton.setColorFilter(Color.argb(255,110,183,216));
-
-            nearby.stopSound();
-        }
-    }
-
-    @Override
-    public void onDisconnect() {
-        isClicked = false;
-        mCallButton.setColorFilter(Color.argb(255,110,183,216));
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        nearby.start();
-
-
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        nearby.stop();
-    }
-
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-    }
-
-    public void init()
-    {
-        nearby = NearByUtil.getInstance();
-        nearby.init(getActivity(), Build.MANUFACTURER,"client");
-        nearby.delegate = this;
-        nearby.setActivity(getActivity());
-        mCallButton.setEnabled(false);
-        mCallButton.setColorFilter(Color.argb(200,110,183,216));
-
-    }
-
-    public void click()
-    {
-        mCallButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mCallButton.setEnabled(false);
-                nearby.startAdvertising();
-                isClicked = true;
-                mCallButton.setColorFilter(Color.argb(255,110,183,216));
-                nearby.playSound();
-
-            }
-        });
-    }
-
-    public String getPhoneName()
-    {
-        BluetoothAdapter myDevice = BluetoothAdapter.getDefaultAdapter();
-        String deviceName = myDevice.getName();
-        return deviceName;
-    }
+//    @Override
+//    public void onPeersFound(HashMap<String, DeviceModel> devices) {
+//        HashMap<String,DeviceModel> clerkList = nearby.getClerkList();
+//        if(!isClicked && clerkList.size() > 0)
+//        {
+//            mCallButton.setEnabled(true);
+//            mCallButton.setColorFilter(Color.parseColor("#0F76B4"));
+//        }
+//        if(clerkList.size() == 0)
+//        {
+//            isClicked = false;
+//            mCallButton.setEnabled(false);
+//            mCallButton.setColorFilter(Color.argb(255,110,183,216));
+//
+//            nearby.stopSound();
+//        }
+//    }
+//
+//    @Override
+//    public void onDisconnect() {
+//        isClicked = false;
+//        mCallButton.setColorFilter(Color.argb(255,110,183,216));
+//    }
+//
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        nearby.start();
+//
+//
+//    }
+//
+//    @Override
+//    public void onStop() {
+//        super.onStop();
+//        nearby.stop();
+//    }
+//
+//
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//
+//    }
+//
+//    public void init()
+//    {
+//        nearby = NearByUtil.getInstance();
+//        nearby.init(getActivity(), Build.MANUFACTURER,"client");
+//        nearby.delegate = this;
+//        nearby.setActivity(getActivity());
+//        mCallButton.setEnabled(false);
+//        mCallButton.setColorFilter(Color.argb(200,110,183,216));
+//
+//    }
+//
+//    public void click()
+//    {
+//        mCallButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                mCallButton.setEnabled(false);
+//                nearby.startAdvertising();
+//                isClicked = true;
+//                mCallButton.setColorFilter(Color.argb(255,110,183,216));
+//                nearby.playSound();
+//
+//            }
+//        });
+//    }
+//
+//    public String getPhoneName()
+//    {
+//        BluetoothAdapter myDevice = BluetoothAdapter.getDefaultAdapter();
+//        String deviceName = myDevice.getName();
+//        return deviceName;
+//    }
 }

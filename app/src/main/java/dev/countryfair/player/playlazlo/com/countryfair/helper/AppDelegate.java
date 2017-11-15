@@ -1,7 +1,9 @@
 package dev.countryfair.player.playlazlo.com.countryfair.helper;
 
 import android.app.Application;
+import android.content.Context;
 import android.location.Location;
+import android.support.multidex.MultiDex;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -32,6 +34,11 @@ public class AppDelegate extends Application {
     private DaoSession daoSession;
     private DatabaseUpgradeHelper helper;
 
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
+    }
 
     @Override
     public void onCreate() {

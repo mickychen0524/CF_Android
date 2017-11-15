@@ -13,7 +13,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
-import com.microsoft.windowsazure.messaging.NotificationHub;
 
 import org.json.JSONObject;
 
@@ -51,11 +50,17 @@ public class RegistrationService extends Service {
                     String token = instanceID.getToken(NotificationSettings.SenderId,
                             GoogleCloudMessaging.INSTANCE_ID_SCOPE);
                     Log.i(TAG, "Got GCM Registration Token: " + token);
-                    NotificationHub hub = new NotificationHub(NotificationSettings.HubName,
-                            NotificationSettings.HubListenConnectionString, RegistrationService.this);
-                    String regID = hub.register(token).getRegistrationId();
-                    Log.i(TAG, "Got regID from NH  : " + regID);
-                    if(token!=null){
+//                    NotificationHub hub = new NotificationHub(NotificationSettings.HubName,
+//                            NotificationSettings.HubListenConnectionString, RegistrationService.this);
+//                    String regID = hub.register(token).getRegistrationId();
+                    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(RegistrationService.this.getApplicationContext());
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.putString("deviceTokenForPush", token);
+                    editor.apply();
+                    String uuid = AndroidUtilities.getUUID(RegistrationService.this);
+                    JSONObject receivedObj = APIInterface.registerPushNotification(RegistrationService.this, token, uuid);
+                    Log.i(TAG, "Got regID from NH  : " + receivedObj);
+                    if(receivedObj != null){
                         saveOnServer(token);
                     }else {
                         displayResult(false);

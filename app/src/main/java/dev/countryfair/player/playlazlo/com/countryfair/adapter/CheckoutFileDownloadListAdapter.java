@@ -20,13 +20,15 @@ import android.widget.Toast;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.ProgressCallback;
-
+import com.koushikdutta.ion.builder.Builders;
 
 import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import dev.countryfair.player.playlazlo.com.countryfair.MainActivity;
 import dev.countryfair.player.playlazlo.com.countryfair.R;
@@ -37,9 +39,6 @@ import dev.countryfair.player.playlazlo.com.countryfair.helper.Constants;
 import dev.countryfair.player.playlazlo.com.countryfair.service.ServiceResultReceiver;
 import pl.droidsonroids.gif.GifDrawable;
 
-/**
- * Created by mymac on 3/18/17.
- */
 
 public class CheckoutFileDownloadListAdapter extends ArrayAdapter<JSONObject> {
     private static final String TAG = CheckoutFileDownloadListAdapter.class.getSimpleName();
@@ -49,7 +48,7 @@ public class CheckoutFileDownloadListAdapter extends ArrayAdapter<JSONObject> {
     private List<JSONObject> downloadFileList = new ArrayList<JSONObject>();
     private List<JSONObject> ticketSuccessList = new ArrayList<JSONObject>();
     private List<JSONObject> ticketErrorList = new ArrayList<JSONObject>();
-
+    Map<Integer, Builders.Any.B> map = new HashMap<>();
     private Intent mServiceIntent;
     private ServiceResultReceiver mReceiverForDownload;
 
@@ -60,11 +59,13 @@ public class CheckoutFileDownloadListAdapter extends ArrayAdapter<JSONObject> {
         this.downloadFileList = downloadFileList;
         this.ticketSuccessList = ticketSuccessList;
         this.ticketErrorList = ticketErrorList;
+        for (int i = 0; i < downloadFileList.size(); i++) {
+            map.put(i, null);
+        }
     }
 
     @Override
     public View getView(final int position, View view, ViewGroup parent) {
-
         setupServiceReceiver();
         final JSONObject downloadFileItem = downloadFileList.get(position);
         LayoutInflater inflater = mContext.getLayoutInflater();
@@ -123,41 +124,58 @@ public class CheckoutFileDownloadListAdapter extends ArrayAdapter<JSONObject> {
                     if (!(new File(localFilePathForTicket).exists())) {
                         new File(localFilePathForTicket).mkdir();
                     }
-                    Ion.with(mContext)
-                            .load(sassUrl)
-                            .progress(new ProgressCallback() {
-                                @Override
-                                public void onProgress(final long downloaded, final long total) {
-                                    mContext.runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            cd.showValue(100 * downloaded / total, 100f, false);
-                                            Log.d(TAG,"" + downloaded + " / " + total);
-                                        }
-                                    });
-                                }
-                            })
-                            .write(new File(localFilePathForTicket + fileName))
-                            .setCallback(new FutureCallback<File>() {
-                                @Override
-                                public void onCompleted(final Exception e, File file) {
-                                    mContext.runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            if (e == null) {
-                                                txtProgress.setText("Download complete");
-                                                cd.showValue(100f, 100f, false);
-                                                if(mOnTicketDownloadListener != null){
-                                                    mOnTicketDownloadListener.onDataChanged(position, true);
-                                                }
-                                            } else {
-                                                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    if (map.get(Integer.valueOf(position)) == null) {
+                        Builders.Any.B test = Ion.with(mContext)
+                                .load(sassUrl)
+                                .progress(new ProgressCallback() {
+                                    @Override
+                                    public void onProgress(final long downloaded, final long total) {
+                                        mContext.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                cd.showValue(100 * downloaded / total, 100f, false);
+                                                Log.d(TAG, "" + downloaded + " / " + total);
+                                                Log.i("devoloTest", "position: " + position);
                                             }
-                                        }
-                                    });
+                                        });
+                                    }
+                                });
+                        map.put(position, test);
+                        test.write(new File(localFilePathForTicket + fileName))
+                                .setCallback(new FutureCallback<File>() {
+                                    @Override
+                                    public void onCompleted(final Exception e, File file) {
+                                        mContext.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                if (e == null) {
+                                                    txtProgress.setText("Download complete");
+                                                    cd.showValue(100f, 100f, false);
+                                                    if (mOnTicketDownloadListener != null) {
+                                                        mOnTicketDownloadListener.onDataChanged(position, true);
+                                                    }
+                                                } else {
+                                                    Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        });
 
-                                }
-                            });
+                                    }
+                                });
+                    } else {
+                        map.get(Integer.valueOf(position)).progress(new ProgressCallback() {
+                            @Override
+                            public void onProgress(final long downloaded, final long total) {
+                                mContext.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        cd.showValue(100 * downloaded / total, 100f, false);
+                                        Log.d(TAG, "" + downloaded + " / " + total);
+                                    }
+                                });
+                            }
+                        });
+                    }
                 }
             } else {
                 cd.showValue(100f, 100f, false);

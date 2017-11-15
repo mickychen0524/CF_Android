@@ -16,12 +16,15 @@ import com.google.zxing.RGBLuminanceSource;
 import com.google.zxing.Reader;
 import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
+
 import dev.countryfair.player.playlazlo.com.countryfair.adapter.CheckoutFileDownloadListAdapter;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.AppHelper;
 import dev.countryfair.player.playlazlo.com.countryfair.helper.Constants;
@@ -69,10 +72,22 @@ public class CheckoutFileDownloadActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.checkout_file_download_activity);
-        ListView mListView = (ListView) findViewById(R.id.download_file_list);
+        final ListView mListView = (ListView) findViewById(R.id.download_file_list);
         mAdapter = new CheckoutFileDownloadListAdapter(this, shoppingCartList, downloadFileList, ticketSuccessList, ticketErrorList);
         mListView.setAdapter(mAdapter);
+//        mListView.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                mListView.smoothScrollToPosition(mAdapter.getCount() -1);
+//            }
+//        }, 100);
 
+//        mListView.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                mListView.smoothScrollToPosition(0);
+//            }
+//        }, 200);
         mAdapter.setTicketDownloadListener(new CheckoutFileDownloadListAdapter.OnTicketDownloadListener() {
             @Override
             public void onDataChanged(int position, boolean ticketStatus) {
@@ -159,6 +174,10 @@ public class CheckoutFileDownloadActivity extends AppCompatActivity {
                 }
             }
         });
+
+        for (int i = 0; i < downloadFileList.size(); i++) {
+            mAdapter.getView(i, null, null);
+        }
 
     }
 

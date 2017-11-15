@@ -9,7 +9,7 @@ android {
         minSdkVersion 17
         targetSdkVersion 26
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
 
@@ -98,6 +98,7 @@ greendao {
 }
 
 dependencies {
+    compile 'com.android.support:multidex:1.0.1'
 
     //compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -148,7 +149,6 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
 
 
-    compile 'com.microsoft.azure:notification-hubs-android-sdk:0.4@aar'
     compile 'com.microsoft.azure:azure-notifications-handler:1.0.1@aar'
 
     compile 'android.arch.persistence.room:runtime:' + rootProject.archRoomVersion;

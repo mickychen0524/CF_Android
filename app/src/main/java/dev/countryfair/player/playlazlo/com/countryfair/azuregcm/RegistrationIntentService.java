@@ -9,7 +9,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
-import com.microsoft.windowsazure.messaging.NotificationHub;
 
 import org.json.JSONObject;
 
@@ -21,7 +20,6 @@ public class RegistrationIntentService extends IntentService {
 
     private static final String TAG = "RegIntentService";
 
-    private NotificationHub hub;
     String regID = null;
 
     public RegistrationIntentService() {
@@ -46,11 +44,11 @@ public class RegistrationIntentService extends IntentService {
             // otherwise your server should have already received the token.
             if ((regID=sharedPreferences.getString("registrationID", null)) == null) {
 
-                NotificationHub hub = new NotificationHub(NotificationSettings.HubName,
-                        NotificationSettings.HubListenConnectionString, this);
-                Log.i(TAG, "Attempting to register with NH using token : " + token);
-
-                regID = hub.register(token).getRegistrationId();
+//                NotificationHub hub = new NotificationHub(NotificationSettings.HubName,
+//                        NotificationSettings.HubListenConnectionString, this);
+//                Log.i(TAG, "Attempting to register with NH using token : " + token);
+//
+//                regID = hub.register(token).getRegistrationId();
                 saveOnServer();
 
                 // If you want to use tags...
