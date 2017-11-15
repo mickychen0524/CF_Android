@@ -220,8 +220,8 @@ public class PermissionActivity extends AppCompatActivity {
         if (camStateFlg && locStateFlg && stgStateFlg) {
             init();
             Intent i = new Intent(PermissionActivity.this, MainActivity.class);
-            startActivity(i);
             finish();
+            startActivity(i);
         }
     }
 
@@ -231,16 +231,8 @@ public class PermissionActivity extends AppCompatActivity {
 
     public void init()
     {
-        final AppCompatActivity activity = this;
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Log.i("Client","init permission");
-                NearByUtil nearby = NearByUtil.getInstance(activity,Build.MANUFACTURER,"client");
-            }
-        },2000);
-
-
+        Log.i("Client","init permission");
+        NearByUtil nearby = NearByUtil.getInstance(this,Build.MANUFACTURER,"client");
     }
 
 
