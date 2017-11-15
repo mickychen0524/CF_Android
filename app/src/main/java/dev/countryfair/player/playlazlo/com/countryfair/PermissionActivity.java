@@ -1,12 +1,14 @@
 package dev.countryfair.player.playlazlo.com.countryfair;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -229,8 +231,15 @@ public class PermissionActivity extends AppCompatActivity {
 
     public void init()
     {
-        Log.i("Client","init permission");
-        NearByUtil nearby = NearByUtil.getInstance(this,Build.MANUFACTURER,"client");
+        final AppCompatActivity activity = this;
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.i("Client","init permission");
+                NearByUtil nearby = NearByUtil.getInstance(activity,Build.MANUFACTURER,"client");
+            }
+        },2000);
+
 
     }
 

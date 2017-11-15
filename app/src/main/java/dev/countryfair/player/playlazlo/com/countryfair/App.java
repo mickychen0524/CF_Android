@@ -62,6 +62,7 @@ public class App extends Application {
     @Override
     public void onTerminate() {
         super.onTerminate();
+        Log.i("Client","App Terminated");
         NearByUtil nearby = NearByUtil.getStaticInternalInstance();
         if(nearby != null)
             nearby.stop();

@@ -169,7 +169,6 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
                 init();
                 click();
                 populateData();
-
             }
         },5000);
 
@@ -892,6 +891,7 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
     {
         Log.i("Client","init from Centre Fragement");
         nearby = NearByUtil.getInstance((MainActivity) getActivity(),Build.MANUFACTURER,"client");
+        nearby.start();
         nearby.delegate = this;
         nearby.setActivity((MainActivity) getActivity());
         mCallButton.setEnabled(false);
@@ -951,4 +951,6 @@ public class CentralFragment extends Fragment implements NearByProtocol.Discover
 
         }
     }
+
+
 }
